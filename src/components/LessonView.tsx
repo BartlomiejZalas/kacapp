@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Lesson } from '../types';
-import { ArrowLeft, BookOpen, MessageSquare, Repeat, Zap, ListOrdered, Layers, Utensils, Home, Users, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, BookOpen, MessageSquare, Repeat, Zap, ListOrdered, Layers, Utensils, Home, Users, CheckCircle2, Star } from 'lucide-react';
 
 const icons: Record<string, any> = {
   Utensils,
@@ -29,11 +29,12 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onSelect
   const subLessons = [
     { type: 'dialog', name: 'Dialog i słuchanie', icon: MessageSquare, color: '#3b82f6' },
     { type: 'vocab', name: 'Lekcja słówek', icon: BookOpen, color: '#10b981' },
-    { type: 'match', name: 'Dopasuj pary', icon: Layers, color: '#f59e0b' },
+    { type: 'hard_vocab', name: 'Słówka (trudne)', icon: Star, color: '#f59e0b' },
+    { type: 'match', name: 'Dopasuj pary', icon: Layers, color: '#6366f1' },
     { type: 'conjugation', name: 'Lekcja odmiana', icon: Repeat, color: '#8b5cf6' },
     { type: 'unusual', name: 'Związki słów', icon: Zap, color: '#ef4444' },
     { type: 'sentences', name: 'Lekcja zdania', icon: MessageSquare, color: '#ec4899' },
-    { type: 'enumeratives', name: 'Enumeratywne', icon: ListOrdered, color: '#6366f1' },
+    { type: 'enumeratives', name: 'Enumeratywne', icon: ListOrdered, color: '#14b8a6' },
   ];
 
   return (
@@ -90,6 +91,7 @@ export const LessonView: React.FC<LessonViewProps> = ({ lesson, onBack, onSelect
                 margin: 0,
                 width: '100%',
                 maxWidth: '180px',
+                minHeight: '130px',
                 position: 'relative',
                 border: isDone ? `2px solid var(--success)` : 'none'
               }}

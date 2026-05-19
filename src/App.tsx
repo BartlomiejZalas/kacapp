@@ -39,7 +39,9 @@ function App() {
       case 'dialog':
         return <DialogView dialog={currentLesson.dialog} lessonId={currentLesson.id} onComplete={handleBackToLesson} />;
       case 'vocab':
-        return <SubLessonVocab words={currentLesson.words} lessonId={currentLesson.id} onComplete={handleBackToLesson} />;
+        return <SubLessonVocab words={currentLesson.words} lessonId={currentLesson.id} type="vocab" onComplete={handleBackToLesson} />;
+      case 'hard_vocab':
+        return <SubLessonVocab words={currentLesson.hardWords} lessonId={currentLesson.id} type="hard_vocab" onComplete={handleBackToLesson} />;
       case 'match':
         return <SubLessonMatch words={currentLesson.words} lessonId={currentLesson.id} onComplete={handleBackToLesson} />;
       case 'conjugation':

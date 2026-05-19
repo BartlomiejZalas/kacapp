@@ -1,15 +1,17 @@
 import { useCallback } from 'react';
 
 export const useTTS = () => {
-  const speak = useCallback((text: string, lang: string = 'ru-RU') => {
+  const speak = useCallback((text: string, lang: string = 'ru-RU', onEnd?: () => void) => {
     if ('speechSynthesis' in window) {
-      // Cancel any ongoing speech
       window.speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = lang;
       
-      // Try to find a better voice if available
+      if (onEnd) {
+        utterance.onend = onEnd;
+      }
+      
       const voices = window.speechSynthesis.getVoices();
       const preferredVoice = voices.find(v => v.lang.startsWith(lang) && v.name.includes('Google'));
       if (preferredVoice) {

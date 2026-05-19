@@ -5,14 +5,16 @@ import { CheckCircle2, XCircle, ArrowRight, Volume2, ArrowLeft } from 'lucide-re
 import { motion, AnimatePresence } from 'framer-motion';
 import { CyrillicKeyboard } from './CyrillicKeyboard';
 import { LessonResult } from './LessonResult';
+import { normalizeRussian } from '../utils/normalize';
 
 interface VocabProps {
   words: Word[];
   lessonId: string;
+  type: 'vocab' | 'hard_vocab';
   onComplete: () => void;
 }
 
-export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, onComplete }) => {
+export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, onComplete }) => {
   const [phase, setPhase] = useState<'learning' | 'testing' | 'finished'>('learning');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
@@ -49,7 +51,7 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, onComple
     if (feedback || !userInput.trim()) return;
 
     const currentWord = testWords[currentIndex];
-    if (userInput.trim().toLowerCase() === currentWord.ru.toLowerCase()) {
+    if (normalizeRussian(userInput) === normalizeRussian(currentWord.ru)) {
       setFeedback('correct');
       speak(currentWord.ru);
       
@@ -67,17 +69,15 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, onComple
   };
 
   const saveProgress = () => {
-    // Save granular progress
     const progress = localStorage.getItem('kacapp_sub_progress');
     const allProgress = progress ? JSON.parse(progress) : {};
     const lessonProgress = allProgress[lessonId] || [];
-    if (!lessonProgress.includes('vocab')) {
-      lessonProgress.push('vocab');
+    if (!lessonProgress.includes(type)) {
+      lessonProgress.push(type);
       allProgress[lessonId] = lessonProgress;
       localStorage.setItem('kacapp_sub_progress', JSON.stringify(allProgress));
     }
 
-    // Save words to history for reviews
     const history = localStorage.getItem('kacapp_word_history');
     const wordHistory: Word[] = history ? JSON.parse(history) : [];
     
@@ -144,8 +144,8 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, onComple
             <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{word.ru}</h1>
             <p style={{ fontSize: '1.25rem', color: 'var(--secondary)', marginBottom: '1.5rem' }}>{word.pl}</p>
             
-            <button className="btn btn-primary" onClick={() => speak(word.ru)}>
-              <Volume2 /> Posłuchaj
+            <button className="btn btn-primary" style={{ borderRadius: '50%', width: '50px', height: '50px', padding: 0 }} onClick={() => speak(word.ru)}>
+              <Volume2 />
             </button>
           </div>
 

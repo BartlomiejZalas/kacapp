@@ -15,11 +15,18 @@ interface DashboardProps {
 
 export const Dashboard: React.FC<DashboardProps> = ({ onSelectLesson, onOpenReviews }) => {
   const [completedSubLessons, setCompletedSubLessons] = useState<Record<string, string[]>>({});
+  const [reviewCount, setReviewCount] = useState(0);
 
   useEffect(() => {
     const progress = localStorage.getItem('kacapp_sub_progress');
     if (progress) {
       setCompletedSubLessons(JSON.parse(progress));
+    }
+
+    const history = localStorage.getItem('kacapp_word_history');
+    if (history) {
+      const words = JSON.parse(history);
+      setReviewCount(Math.min(words.length, 10));
     }
   }, []);
 
@@ -35,14 +42,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectLesson, onOpenRevi
         onClick={onOpenReviews}
         style={{ width: '100%', marginBottom: '2rem', background: 'var(--accent)', color: 'white' }}
       >
-        <RotateCcw size={20} /> Powtórki (Dziś)
+        <RotateCcw size={20} /> Powtórki ({reviewCount})
       </button>
 
       <div className="grid">
         {lessons.map((lesson) => {
           const IconComponent = icons[lesson.icon] || Home;
           const completedCount = completedSubLessons[lesson.id]?.length || 0;
-          const totalSubLessons = 7; // dialog, vocab, match, conjugation, unusual, sentences, enumeratives
+          const totalSubLessons = 8; // dialog, vocab, hard_vocab, match, conjugation, unusual, sentences, enumeratives
           const isFullyCompleted = completedCount === totalSubLessons;
 
           return (
@@ -70,7 +77,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectLesson, onOpenRevi
                 <div>
                   <h3 style={{ margin: 0 }}>{lesson.name}</h3>
                   <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>
-                    Postęp: {completedCount}/{totalSubLessons} • {lesson.words.length} słówek
+                    Postęp: {completedCount}/{totalSubLessons}
                   </p>
                 </div>
               </div>

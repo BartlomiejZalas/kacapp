@@ -96,7 +96,7 @@ export const lessons: Lesson[] = [
         explanation: 'Używamy narzędnika po "с" i dopełniacza po "без".',
         examples: [
           { pl: 'Herbata z cukrem', ru: 'Чай с сахаром' },
-          { pl: 'Kawa bez cukru', ru: 'Кофе без сахара' },
+          { pl: 'Kawa bez cukru', ru: 'Кофе bez сахара' },
           { pl: 'Woda z cytryną', ru: 'Вода с лимоном' },
           { pl: 'Zupa bez soli', ru: 'Суп без соли' },
           { pl: 'Chcę zupę z chlebem', ru: 'Я хочу суп с хлебом' },
@@ -122,6 +122,18 @@ export const lessons: Lesson[] = [
       { pl: '9 - dziewięć', ru: 'девять' },
       { pl: '10 - dziesięć', ru: 'десять' },
     ],
+    hardWords: [
+      { pl: 'polecać', ru: 'рекомендовать', image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=400' },
+      { pl: 'smacznego', ru: 'приятного аппетита', image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400' },
+      { pl: 'śniadanie', ru: 'завтрак', image: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400' },
+      { pl: 'obiad', ru: 'обед', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400' },
+      { pl: 'kolacja', ru: 'ужин', image: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400' },
+      { pl: 'restauracja', ru: 'ресторан', image: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400' },
+      { pl: 'kelner', ru: 'официант', image: 'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=400' },
+      { pl: 'rachunek', ru: 'счёт', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400' },
+      { pl: 'napój', ru: 'напиток', image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400' },
+      { pl: 'sok', ru: 'сок', image: 'https://images.unsplash.com/photo-1600271886332-699bb2798b98?w=400' },
+    ],
   },
   {
     id: '2',
@@ -131,7 +143,7 @@ export const lessons: Lesson[] = [
 - Да, я пришёл полчаса назад.|Tak, przyszedłem pół godziny temu.
 - Чем ты занимаешься?|Czym się zajmujesz?
 - Я сижу в гостиной и смотрю телевизор.|Siedzę w salonie i oglądam telewizję.
-- Ты już ужинал?|Jadłeś już kolację?
+- Ты уже ужинал?|Jadłeś już kolację?
 - Нет ещё, я жду тебя.|Jeszcze nie, czekam na ciebie.
 - Я буду дома через двадцать минут.|Będę w domu za dwadzieścia minut.
 - Отлично, тогда я начну готовить.|Świetnie, wtedy zacznę gotować.
@@ -222,6 +234,18 @@ export const lessons: Lesson[] = [
           { pl: 'Mój dom jest duży.', ru: 'Мой дом большой' },
         ]
       },
+      { 
+        pl: 'Na ulicy', 
+        ru: 'На улице', 
+        explanation: 'W języku rosyjskim używamy "на" zamiast "w" mówiąc o ulicy.',
+        examples: [
+          { pl: 'Jestem na ulicy.', ru: 'Я на улице' },
+          { pl: 'Oni są na dworze.', ru: 'Они на улице' },
+          { pl: 'Dzieci są na ulicy.', ru: 'Дети на улице' },
+          { pl: 'Na ulicy jest zimno.', ru: 'На улице холодно' },
+          { pl: 'Wyjdź na dwór.', ru: 'Выйди на улицу' },
+        ]
+      },
     ],
     sentences: [
       { pl: 'Gdzie jesteś?', ru: 'Где ты?' },
@@ -248,6 +272,18 @@ export const lessons: Lesson[] = [
       { pl: 'listopad', ru: 'ноябрь' },
       { pl: 'grudzień', ru: 'декабрь' },
     ],
+    hardWords: [
+      { pl: 'mieszkanie', ru: 'квартира', image: 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400' },
+      { pl: 'sypialnia', ru: 'спальня', image: 'https://images.unsplash.com/photo-1540518614846-7eded433c457?w=400' },
+      { pl: 'łazienka', ru: 'ванная', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400' },
+      { pl: 'budynek', ru: 'здание', image: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400' },
+      { pl: 'piętro', ru: 'этаж', image: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?w=400' },
+      { pl: 'klucze', ru: 'ключи', image: 'https://images.unsplash.com/photo-1582139329536-e7284fece509?w=400' },
+      { pl: 'lodówka', ru: 'холодильник', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400' },
+      { pl: 'telewizor', ru: 'телевизор', image: 'https://images.unsplash.com/photo-1593359674290-309995570089?w=400' },
+      { pl: 'salon', ru: 'гостиная', image: 'https://images.unsplash.com/photo-1583847268964-b28dc2f51ac9?w=400' },
+      { pl: 'drzwi', ru: 'дверь', image: 'https://images.unsplash.com/photo-1481277542470-605fe2e0e5ef?w=400' },
+    ],
   },
   {
     id: '3',
@@ -260,7 +296,7 @@ export const lessons: Lesson[] = [
 - Твои родители очень красиво выглядят.|Twoi rodzice bardzo ładnie wyglądają.
 - Спасибо, они сейчас на пенсии.|Dziękuję, oni są teraz na emeryturze.
 - А это твои брат и сестра?|A to twój brat i siostra?
-- Да, это мой старший брат и младшая сестра.|Tak, to mój starszy brat i młodsza siostra.
+- Да, это мой старший брат i младшая сестра.|Tak, to mój starszy brat i młodsza siostra.
 - Где они живут?|Gdzie oni mieszkają?
 - Брат живёт в Москве, а сестра учится в Питере.|Brat mieszka w Moskwie, a siostra uczy się w Pitrze (Petersburgu).
 - У тебя есть дети?|Masz dzieci?
@@ -271,7 +307,7 @@ export const lessons: Lesson[] = [
     words: [
       { pl: 'mama', ru: 'мама', image: 'https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?w=400' },
       { pl: 'tata', ru: 'папа', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400' },
-      { pl: 'brat', ru: 'brat', image: 'https://images.unsplash.com/photo-1581952976147-5a2d15560349?w=400' },
+      { pl: 'brat', ru: 'брат', image: 'https://images.unsplash.com/photo-1581952976147-5a2d15560349?w=400' },
       { pl: 'siostra', ru: 'сестра', image: 'https://images.unsplash.com/photo-1543332164-6e82f355badc?w=400' },
       { pl: 'syn', ru: 'сын', image: 'https://images.unsplash.com/photo-1502086223501-7ea2443f84fd?w=400' },
       { pl: 'córka', ru: 'дочь', image: 'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=400' },
@@ -346,6 +382,18 @@ export const lessons: Lesson[] = [
           { pl: 'Jak oni mają na imię?', ru: 'Как их зовут?' },
         ]
       },
+      { 
+        pl: 'U mnie jest... (Mam...)', 
+        ru: 'У меня есть...', 
+        explanation: 'W języku rosyjskim "posiadanie" wyrażamy konstrukcją "u kogo jest co".',
+        examples: [
+          { pl: 'Ja mam (U mnie jest)', ru: 'У меня есть' },
+          { pl: 'Ty masz (U ciebie jest)', ru: 'У тебя есть' },
+          { pl: 'On ma (U niego jest)', ru: 'У него есть' },
+          { pl: 'Ona ma (U niej jest)', ru: 'У неё есть' },
+          { pl: 'My mamy (U nas jest)', ru: 'У нас есть' },
+        ]
+      },
     ],
     sentences: [
       { pl: 'Kto to jest?', ru: 'Кто это?' },
@@ -365,6 +413,18 @@ export const lessons: Lesson[] = [
       { pl: '18', ru: 'восемнадцать' },
       { pl: '19', ru: 'девятнадцать' },
       { pl: '20', ru: 'двадцать' },
+    ],
+    hardWords: [
+      { pl: 'rodzina', ru: 'семья', image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400' },
+      { pl: 'rodzice', ru: 'родители', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400' },
+      { pl: 'starszy', ru: 'старший', image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400' },
+      { pl: 'młodszy', ru: 'младший', image: 'https://images.unsplash.com/photo-1543332164-6e82f355badc?w=400' },
+      { pl: 'dzieci', ru: 'дети', image: 'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=400' },
+      { pl: 'wnuk', ru: 'внук', image: 'https://images.unsplash.com/photo-1502086223501-7ea2443f84fd?w=400' },
+      { pl: 'wnuczka', ru: 'внучка', image: 'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=400' },
+      { pl: 'krewni', ru: 'родственники', image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400' },
+      { pl: 'człowiek', ru: 'человек', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400' },
+      { pl: 'ludzie', ru: 'люди', image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400' },
     ],
   },
 ];

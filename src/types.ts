@@ -34,4 +34,5 @@ export interface Lesson {
   }[];
   sentences: { pl: string; ru: string }[];
   enumeratives: Enumerative[];
+  hardWords: Word[];
 }
