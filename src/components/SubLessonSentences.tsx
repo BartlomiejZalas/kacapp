@@ -4,6 +4,7 @@ import { CheckCircle2, XCircle, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CyrillicKeyboard } from './CyrillicKeyboard';
 import { LessonResult } from './LessonResult';
+import { normalizeRussian } from '../utils/normalize';
 
 interface SentencesProps {
   sentences: { pl: string; ru: string }[];
@@ -40,7 +41,7 @@ export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lesson
     if (feedback || !userInput.trim()) return;
 
     const current = sentences[currentIndex];
-    if (userInput.trim().toLowerCase() === current.ru.toLowerCase()) {
+    if (normalizeRussian(userInput) === normalizeRussian(current.ru)) {
       setFeedback('correct');
       speak(current.ru);
     } else {
