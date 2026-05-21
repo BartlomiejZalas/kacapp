@@ -20,7 +20,7 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, on
   const [userInput, setUserInput] = useState('');
   const [testWords, setTestWords] = useState<Word[]>([]);
   const [wrongWords, setWrongWords] = useState<Word[]>([]);
-  const [masteredWordsRu, setMasteredWordsRu] = useState<string[]>([]);
+  const [sessionCorrectWordsRu, setSessionCorrectWordsRu] = useState<string[]>([]);
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const { speak } = useTTS();
 
@@ -55,10 +55,8 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, on
       setFeedback('correct');
       speak(currentWord.ru);
       
-      if (testWords.length === words.length && !wrongWords.find(w => w.ru === currentWord.ru)) {
-         if (!masteredWordsRu.includes(currentWord.ru)) {
-           setMasteredWordsRu(prev => [...prev, currentWord.ru]);
-         }
+      if (!sessionCorrectWordsRu.includes(currentWord.ru)) {
+        setSessionCorrectWordsRu(prev => [...prev, currentWord.ru]);
       }
     } else {
       setFeedback('wrong');
@@ -128,7 +126,7 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, on
   }
 
   const word = words[currentIndex];
-  const progress = (masteredWordsRu.length / words.length) * 100;
+  const progress = (sessionCorrectWordsRu.length / words.length) * 100;
 
   return (
     <div className="container fade-in">
@@ -173,7 +171,7 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, on
 
           <div className="card" style={{ textAlign: 'center', paddingBottom: '3rem' }}>
             <span style={{ color: 'var(--secondary)', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700 }}>
-              Wpisz po rosyjsku (Opanowane: {masteredWordsRu.length}/{words.length})
+              Wpisz po rosyjsku (Opanowane: {sessionCorrectWordsRu.length}/{words.length})
             </span>
             <h2 style={{ fontSize: '2rem', margin: '1rem 0' }}>{testWords[currentIndex].pl}</h2>
             

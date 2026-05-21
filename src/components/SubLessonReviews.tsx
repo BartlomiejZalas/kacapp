@@ -153,9 +153,20 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
   const current = sessionQueue[currentIndex];
 
   const progressBarAnimation = overachieverLevel > 0 ? {
-    rotate: [0, -1, 1, -1, 1, 0],
-    scale: [1, 1.02, 0.98, 1.02, 1],
-    transition: { duration: 0.5, repeat: Infinity }
+    rotate: [0, -2, 2, -2, 2, 0],
+    x: [0, -5, 5, -5, 5, 0],
+    y: overachieverLevel > 2 ? [0, -2, 2, -2, 2, 0] : 0,
+    scale: [1, 1.05, 0.95, 1.05, 1],
+    transition: { 
+      duration: Math.max(0.1, 0.5 - overachieverLevel * 0.05), 
+      repeat: Infinity 
+    }
+  } : {};
+
+  const cardAnimation = overachieverLevel > 4 ? {
+    rotate: overachieverLevel > 6 ? [0, -1, 1, -1, 1, 0] : 0,
+    y: overachieverLevel > 8 ? [0, -2, 2, -2, 2, 0] : 0,
+    transition: { duration: 0.2, repeat: Infinity }
   } : {};
 
   return (
@@ -171,20 +182,29 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
       <motion.div 
         className="progress-bar"
         animate={progressBarAnimation}
-        style={{ height: overachieverLevel > 0 ? '12px' : '8px', background: overachieverLevel > 3 ? '#ff00ff' : 'var(--background)' }}
+        style={{ 
+          height: overachieverLevel > 0 ? '16px' : '8px', 
+          background: overachieverLevel > 3 ? '#ff00ff20' : 'var(--background)',
+          marginTop: '1rem'
+        }}
       >
         <motion.div 
           className="progress-fill" 
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           style={{ 
-            background: overachieverLevel > 0 ? `linear-gradient(90deg, var(--accent), #ff00ff)` : 'var(--accent)',
-            boxShadow: overachieverLevel > 2 ? '0 0 10px #ff00ff' : 'none'
+            background: overachieverLevel > 0 ? `linear-gradient(90deg, #2563eb, #ff00ff, #00ffff)` : 'var(--accent)',
+            backgroundSize: '200% 100%',
+            boxShadow: overachieverLevel > 2 ? '0 0 20px #ff00ff' : 'none'
           }}
         />
       </motion.div>
 
-      <div className="card" style={{ textAlign: 'center', paddingBottom: '3rem', position: 'relative', overflow: 'hidden' }}>
+      <motion.div 
+        className="card" 
+        animate={cardAnimation}
+        style={{ textAlign: 'center', paddingBottom: '3rem', position: 'relative', overflow: 'hidden' }}
+      >
         {overachieverLevel > 5 && (
           <motion.div 
             style={{ position: 'absolute', top: 10, right: 10 }}
