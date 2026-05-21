@@ -81,12 +81,24 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, on
     const history = localStorage.getItem('kacapp_word_history');
     const wordHistory: Word[] = history ? JSON.parse(history) : [];
     
+    const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
+    const reviewsNew: Word[] = reviewsNewStr ? JSON.parse(reviewsNewStr) : [];
+
     words.forEach(word => {
-      if (!wordHistory.find(w => w.ru === word.ru)) {
+      const isKnown = wordHistory.find(w => w.ru === word.ru);
+      const isAlreadyInNew = reviewsNew.find(w => w.ru === word.ru);
+      
+      if (!isKnown && !isAlreadyInNew) {
+        reviewsNew.push(word);
+      }
+      
+      if (!isKnown) {
         wordHistory.push(word);
       }
     });
+    
     localStorage.setItem('kacapp_word_history', JSON.stringify(wordHistory));
+    localStorage.setItem('kacapp_reviews_new', JSON.stringify(reviewsNew));
   };
 
   const handleNextTesting = () => {

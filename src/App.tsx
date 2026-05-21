@@ -9,9 +9,10 @@ import { SubLessonUnusual } from './components/SubLessonUnusual';
 import { SubLessonSentences } from './components/SubLessonSentences';
 import { SubLessonEnumeratives } from './components/SubLessonEnumeratives';
 import { SubLessonReviews } from './components/SubLessonReviews';
-import { lessons } from './data/lessons';
+import { categories } from './data/lessons';
 
 function App() {
+  const lessons = categories.flatMap(c => c.lessons);
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
   const [currentSubLesson, setCurrentSubLesson] = useState<string | null>(null);
   const [showReviews, setShowReviews] = useState(false);

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import type { Lesson } from '../types';
-import { ArrowLeft, BookOpen, MessageSquare, Repeat, Zap, ListOrdered, Layers, Utensils, Home, Users, CheckCircle2, Star } from 'lucide-react';
+import { ArrowLeft, BookOpen, MessageSquare, Repeat, Zap, ListOrdered, Layers, Utensils, Home, Users, Shield, CheckCircle2, Star } from 'lucide-react';
 
 const icons: Record<string, any> = {
   Utensils,
   Home,
   Users,
+  Shield,
 };
 
 interface LessonViewProps {

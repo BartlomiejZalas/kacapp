@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { lessons } from '../data/lessons';
-import { Utensils, Home, Users, ChevronRight, CheckCircle2, RotateCcw } from 'lucide-react';
+import { categories } from '../data/lessons';
+import { Utensils, Home, Users, Shield, ChevronRight, CheckCircle2, RotateCcw } from 'lucide-react';
 
 const icons: Record<string, any> = {
   Utensils,
   Home,
   Users,
+  Shield,
 };
 
 interface DashboardProps {
@@ -23,73 +24,157 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectLesson, onOpenRevi
       setCompletedSubLessons(JSON.parse(progress));
     }
 
-    const history = localStorage.getItem('kacapp_word_history');
-    if (history) {
-      const words = JSON.parse(history);
-      setReviewCount(Math.min(words.length, 10));
+    const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
+    const dailyPoolStr = localStorage.getItem('kacapp_daily_review_pool');
+    const lastDate = localStorage.getItem('kacapp_last_review_date');
+    const historyStr = localStorage.getItem('kacapp_word_history');
+
+    const reviewsNew = reviewsNewStr ? JSON.parse(reviewsNewStr) : [];
+    const history = historyStr ? JSON.parse(historyStr) : [];
+    const today = new Date().toLocaleDateString();
+
+    if (lastDate === today && dailyPoolStr) {
+      const dailyPool = JSON.parse(dailyPoolStr);
+      setReviewCount(reviewsNew.length + dailyPool.length);
+    } else {
+      const potentialRandom = history.filter((h: any) => !reviewsNew.find((rn: any) => rn.ru === h.ru));
+      const newDailyPoolSize = Math.min(potentialRandom.length, 20);
+      setReviewCount(reviewsNew.length + newDailyPoolSize);
     }
   }, []);
 
   return (
     <div className="container fade-in">
-      <header style={{ marginBottom: '2rem', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--primary)' }}>KacApp</h1>
-        <p style={{ color: 'var(--secondary)' }}>Nauka rosyjskiego z przyjemnością</p>
+      <header style={{ marginBottom: '2.5rem' }}>
+        <div className="flex" style={{ justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
+          <img 
+            src="/favicon.svg" 
+            alt="Logo" 
+            style={{ 
+              width: '100px', 
+              height: '100px', 
+              borderRadius: '50%', 
+              boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)',
+              border: '3px solid white',
+              flexShrink: 0
+            }} 
+          />
+          <div style={{ textAlign: 'left' }}>
+            <h1 style={{ fontSize: '2.75rem', fontWeight: 800, color: 'var(--primary)', margin: 0, lineHeight: 1.1 }}>KacApp</h1>
+            <p style={{ color: 'var(--secondary)', fontStyle: 'italic', fontSize: '0.85rem', margin: '0.25rem 0 0', maxWidth: '250px' }}>
+              Rosyjski, który wchodzi do głowy jak do państw ościennych
+            </p>
+          </div>
+        </div>
       </header>
 
-      <button 
-        className="btn btn-secondary" 
+      <div 
+        className="card flex" 
         onClick={onOpenReviews}
-        style={{ width: '100%', marginBottom: '2rem', background: 'var(--accent)', color: 'white' }}
+        style={{ 
+          cursor: 'pointer', 
+          justifyContent: 'space-between', 
+          alignItems: 'center',
+          marginBottom: '2rem',
+          border: reviewCount > 0 ? '2px solid var(--primary)' : 'none'
+        }}
       >
-        <RotateCcw size={20} /> Powtórki ({reviewCount})
-      </button>
-
-      <div className="grid">
-        {lessons.map((lesson) => {
-          const IconComponent = icons[lesson.icon] || Home;
-          const completedCount = completedSubLessons[lesson.id]?.length || 0;
-          const totalSubLessons = 8; // dialog, vocab, hard_vocab, match, conjugation, unusual, sentences, enumeratives
-          const isFullyCompleted = completedCount === totalSubLessons;
-
-          return (
-            <div 
-              key={lesson.id} 
-              className="card flex" 
-              onClick={() => onSelectLesson(lesson.id)}
-              style={{ 
-                cursor: 'pointer', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                position: 'relative',
-                border: isFullyCompleted ? '2px solid var(--success)' : 'none'
-              }}
-            >
-              <div className="flex">
-                <div style={{ 
-                  background: 'var(--background)', 
-                  padding: '1rem', 
-                  borderRadius: '1rem',
-                  color: 'var(--primary)'
-                }}>
-                  <IconComponent size={32} />
-                </div>
-                <div>
-                  <h3 style={{ margin: 0 }}>{lesson.name}</h3>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>
-                    Postęp: {completedCount}/{totalSubLessons}
-                  </p>
-                </div>
-              </div>
-              
-              <div className="flex" style={{ gap: '0.5rem' }}>
-                {isFullyCompleted && <CheckCircle2 size={24} color="var(--success)" />}
-                <ChevronRight color="var(--secondary)" />
-              </div>
+        <div className="flex">
+          <div style={{ 
+            background: 'var(--background)', 
+            padding: '1rem', 
+            borderRadius: '1rem',
+            color: 'var(--primary)'
+          }}>
+            <RotateCcw size={32} />
+          </div>
+          <div>
+            <h3 style={{ margin: 0 }}>Powtórki</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>
+              Powtórz poznane słówka
+            </p>
+          </div>
+        </div>
+        
+        <div className="flex" style={{ gap: '0.5rem' }}>
+          {reviewCount > 0 && (
+            <div style={{
+              background: '#2563eb',
+              color: 'white',
+              width: '2.5rem',
+              height: '2.5rem',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontWeight: 700,
+              fontSize: '1rem',
+              boxShadow: '0 4px 6px -1px rgba(37, 99, 235, 0.3)'
+            }}>
+              {reviewCount}
             </div>
-          );
-        })}
+          )}
+          <ChevronRight color="var(--secondary)" />
+        </div>
       </div>
+
+      {categories.map((category) => (
+        <div key={category.id} style={{ marginBottom: '3rem' }}>
+          <h2 style={{ 
+            fontSize: '1.5rem', 
+            fontWeight: 700, 
+            color: 'var(--accent)', 
+            marginBottom: '1rem',
+          }}>
+            {category.name}
+          </h2>
+          <div className="grid">
+            {category.lessons.map((lesson) => {
+              const IconComponent = icons[lesson.icon] || Home;
+              const completedCount = completedSubLessons[lesson.id]?.length || 0;
+              const totalSubLessons = 8; // dialog, vocab, hard_vocab, match, conjugation, unusual, sentences, enumeratives
+              const isFullyCompleted = completedCount === totalSubLessons;
+
+              return (
+                <div 
+                  key={lesson.id} 
+                  className="card flex" 
+                  onClick={() => onSelectLesson(lesson.id)}
+                  style={{ 
+                    cursor: 'pointer', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    position: 'relative',
+                    border: isFullyCompleted ? '2px solid var(--success)' : 'none'
+                  }}
+                >
+                  <div className="flex">
+                    <div style={{ 
+                      background: 'var(--background)', 
+                      padding: '1rem', 
+                      borderRadius: '1rem',
+                      color: 'var(--primary)'
+                    }}>
+                      <IconComponent size={32} />
+                    </div>
+                    <div>
+                      <h3 style={{ margin: 0 }}>{lesson.name}</h3>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--secondary)' }}>
+                        Postęp: {completedCount}/{totalSubLessons}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex" style={{ gap: '0.5rem' }}>
+                    {isFullyCompleted && <CheckCircle2 size={24} color="var(--success)" />}
+                    <ChevronRight color="var(--secondary)" />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   );
 };

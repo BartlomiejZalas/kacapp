@@ -1,29 +1,48 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import type { Word } from '../types';
 import { useTTS } from '../hooks/useTTS';
-import { CheckCircle2, XCircle, ArrowLeft, RotateCcw } from 'lucide-react';
+import { CheckCircle2, XCircle, ArrowLeft, RotateCcw, PartyPopper, Ghost, Zap } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CyrillicKeyboard } from './CyrillicKeyboard';
+import { normalizeRussian } from '../utils/normalize';
 
 interface ReviewsProps {
   onBack: () => void;
 }
 
 export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
-  const [reviewWords, setReviewWords] = useState<Word[]>([]);
+  const [sessionQueue, setSessionQueue] = useState<Word[]>([]);
+  const [wrongInSession, setWrongInSession] = useState<Set<string>>(new Set());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
   const [isFinished, setIsFinished] = useState(false);
+  const [overachieverLevel, setOverachieverLevel] = useState(0);
   const { speak } = useTTS();
 
   useEffect(() => {
-    const history = localStorage.getItem('kacapp_word_history');
-    if (history) {
-      const words: Word[] = JSON.parse(history);
-      const shuffled = [...words].sort(() => Math.random() - 0.5).slice(0, 10);
-      setReviewWords(shuffled);
+    const historyStr = localStorage.getItem('kacapp_word_history');
+    const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
+    const lastDate = localStorage.getItem('kacapp_last_review_date');
+    const dailyPoolStr = localStorage.getItem('kacapp_daily_review_pool');
+
+    const history: Word[] = historyStr ? JSON.parse(historyStr) : [];
+    const reviewsNew: Word[] = reviewsNewStr ? JSON.parse(reviewsNewStr) : [];
+    
+    const today = new Date().toLocaleDateString();
+    let dailyPool: Word[] = [];
+
+    if (lastDate === today && dailyPoolStr) {
+      dailyPool = JSON.parse(dailyPoolStr);
+    } else {
+      const potentialRandom = history.filter(h => !reviewsNew.find(rn => rn.ru === h.ru));
+      dailyPool = [...potentialRandom].sort(() => Math.random() - 0.5).slice(0, 20);
+      localStorage.setItem('kacapp_last_review_date', today);
+      localStorage.setItem('kacapp_daily_review_pool', JSON.stringify(dailyPool));
     }
+
+    const initialQueue = [...reviewsNew, ...dailyPool];
+    setSessionQueue(initialQueue);
 
     return () => {
       window.speechSynthesis.cancel();
@@ -34,30 +53,81 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
     e?.preventDefault();
     if (feedback || !userInput.trim()) return;
 
-    if (userInput.trim().toLowerCase() === reviewWords[currentIndex].ru.toLowerCase()) {
+    const currentWord = sessionQueue[currentIndex];
+    if (normalizeRussian(userInput) === normalizeRussian(currentWord.ru)) {
       setFeedback('correct');
-      speak(reviewWords[currentIndex].ru);
+      speak(currentWord.ru);
     } else {
       setFeedback('wrong');
+      setWrongInSession(prev => new Set(prev).add(currentWord.ru));
     }
   };
 
   const handleNext = () => {
-    setFeedback(null);
-    setUserInput('');
-    if (currentIndex < reviewWords.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+    const currentWord = sessionQueue[currentIndex];
+    const isCorrect = feedback === 'correct';
+
+    if (isCorrect) {
+      // If passed flawlessly (first time in this session), remove from persistent queues
+      if (!wrongInSession.has(currentWord.ru)) {
+        const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
+        if (reviewsNewStr) {
+          const reviewsNew: Word[] = JSON.parse(reviewsNewStr);
+          localStorage.setItem('kacapp_reviews_new', JSON.stringify(reviewsNew.filter(w => w.ru !== currentWord.ru)));
+        }
+
+        const dailyPoolStr = localStorage.getItem('kacapp_daily_review_pool');
+        if (dailyPoolStr) {
+          const dailyPool: Word[] = JSON.parse(dailyPoolStr);
+          localStorage.setItem('kacapp_daily_review_pool', JSON.stringify(dailyPool.filter(w => w.ru !== currentWord.ru)));
+        }
+      }
+
+      setFeedback(null);
+      setUserInput('');
+      if (currentIndex < sessionQueue.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else {
+        setIsFinished(true);
+      }
     } else {
-      setIsFinished(true);
+      // Wrong entry - move word to the end of the queue
+      const updatedQueue = [...sessionQueue];
+      updatedQueue.push(currentWord);
+      setSessionQueue(updatedQueue);
+      
+      setFeedback(null);
+      setUserInput('');
+      setCurrentIndex(currentIndex + 1);
     }
   };
 
-  if (reviewWords.length === 0) {
+  const addMoreWords = () => {
+    const historyStr = localStorage.getItem('kacapp_word_history');
+    const history: Word[] = historyStr ? JSON.parse(historyStr) : [];
+    if (history.length > 0) {
+      const moreWords = [...history].sort(() => Math.random() - 0.5).slice(0, 10);
+      setSessionQueue([...sessionQueue, ...moreWords]);
+      setIsFinished(false);
+      setOverachieverLevel(prev => prev + 1);
+    }
+  };
+
+  const progress = useMemo(() => {
+    if (sessionQueue.length === 0) return 0;
+    return (currentIndex / sessionQueue.length) * 100;
+  }, [currentIndex, sessionQueue.length]);
+
+  if (sessionQueue.length === 0 && !isFinished) {
     return (
       <div className="container fade-in" style={{ textAlign: 'center', paddingTop: '4rem' }}>
-        <h2 style={{ marginBottom: '1rem' }}>Brak słówek do powtórki</h2>
-        <p style={{ color: 'var(--secondary)', marginBottom: '2rem' }}>Ukończ lekcję słówek, aby dodać je do systemu powtórek.</p>
-        <button className="btn btn-primary" onClick={onBack}>Wróć do menu</button>
+        <PartyPopper size={64} color="var(--accent)" style={{ margin: '0 auto 2rem' }} />
+        <h2 style={{ marginBottom: '1rem' }}>Cel osiągnięty!</h2>
+        <p style={{ color: 'var(--secondary)', marginBottom: '2rem' }}>Wszystkie powtórki na dziś zaliczone.</p>
+        <div className="flex" style={{ flexDirection: 'column', gap: '1rem' }}>
+          <button className="btn btn-primary" onClick={addMoreWords}>Chcę więcej!</button>
+          <button className="btn btn-secondary" onClick={onBack}>Wróć do menu</button>
+        </div>
       </div>
     );
   }
@@ -67,13 +137,26 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
       <div className="container fade-in" style={{ textAlign: 'center', paddingTop: '4rem' }}>
         <CheckCircle2 size={64} color="var(--success)" style={{ margin: '0 auto 2rem' }} />
         <h2>Powtórka zakończona!</h2>
-        <p style={{ color: 'var(--secondary)', marginBottom: '3rem' }}>Świetna robota. Zapraszamy jutro!</p>
-        <button className="btn btn-primary" style={{ width: '100%' }} onClick={onBack}>Wróć do menu</button>
+        <p style={{ color: 'var(--secondary)', marginBottom: '3rem' }}>
+          {overachieverLevel > 0 
+            ? `Wow! Jesteś na poziomie overachievera: ${overachieverLevel}!` 
+            : 'Świetna robota. Zapraszamy jutro!'}
+        </p>
+        <div className="flex" style={{ flexDirection: 'column', gap: '1rem' }}>
+          <button className="btn btn-primary" onClick={addMoreWords}>Jeszcze więcej!</button>
+          <button className="btn btn-secondary" style={{ width: '100%' }} onClick={onBack}>Wróć do menu</button>
+        </div>
       </div>
     );
   }
 
-  const current = reviewWords[currentIndex];
+  const current = sessionQueue[currentIndex];
+
+  const progressBarAnimation = overachieverLevel > 0 ? {
+    rotate: [0, -1, 1, -1, 1, 0],
+    scale: [1, 1.02, 0.98, 1.02, 1],
+    transition: { duration: 0.5, repeat: Infinity }
+  } : {};
 
   return (
     <div className="container fade-in">
@@ -85,9 +168,38 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
         <ArrowLeft size={20} /> Wróć
       </button>
 
-      <div className="card" style={{ textAlign: 'center', paddingBottom: '3rem' }}>
-        <div className="flex" style={{ justifyContent: 'center', color: 'var(--accent)', marginBottom: '1rem' }}>
-          <RotateCcw size={20} /> <strong>Powtórka ({currentIndex + 1} / {reviewWords.length})</strong>
+      <motion.div 
+        className="progress-bar"
+        animate={progressBarAnimation}
+        style={{ height: overachieverLevel > 0 ? '12px' : '8px', background: overachieverLevel > 3 ? '#ff00ff' : 'var(--background)' }}
+      >
+        <motion.div 
+          className="progress-fill" 
+          initial={{ width: 0 }}
+          animate={{ width: `${progress}%` }}
+          style={{ 
+            background: overachieverLevel > 0 ? `linear-gradient(90deg, var(--accent), #ff00ff)` : 'var(--accent)',
+            boxShadow: overachieverLevel > 2 ? '0 0 10px #ff00ff' : 'none'
+          }}
+        />
+      </motion.div>
+
+      <div className="card" style={{ textAlign: 'center', paddingBottom: '3rem', position: 'relative', overflow: 'hidden' }}>
+        {overachieverLevel > 5 && (
+          <motion.div 
+            style={{ position: 'absolute', top: 10, right: 10 }}
+            animate={{ scale: [1, 1.5, 1], rotate: 360 }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            <Zap color="#ffff00" fill="#ffff00" />
+          </motion.div>
+        )}
+        
+        <div className="flex" style={{ justifyContent: 'center', color: overachieverLevel > 0 ? '#ff00ff' : 'var(--accent)', marginBottom: '1rem' }}>
+          {overachieverLevel > 0 ? <Ghost size={20} /> : <RotateCcw size={20} />}
+          <strong>
+            {overachieverLevel > 0 ? `TRYB DZIADA LVL ${overachieverLevel}` : 'Powtórka'} ({currentIndex + 1} / {sessionQueue.length})
+          </strong>
         </div>
         
         <h2 style={{ fontSize: '2.5rem', margin: '1rem 0' }}>{current.pl}</h2>
@@ -101,7 +213,11 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
               placeholder="Wpisz po rosyjsku..."
               autoFocus
               disabled={feedback === 'correct'}
-              style={{ textAlign: 'center', fontSize: '1.25rem' }}
+              style={{ 
+                textAlign: 'center', 
+                fontSize: '1.25rem',
+                borderColor: overachieverLevel > 4 ? '#ff00ff' : undefined
+              }}
             />
             <CyrillicKeyboard 
               onInput={(char) => !feedback && setUserInput(prev => prev + char)} 
@@ -111,12 +227,19 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
           
           <AnimatePresence>
             {feedback && (
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: '1rem' }}>
+              <motion.div 
+                initial={{ opacity: 0, scale: 0.9 }} 
+                animate={{ opacity: 1, scale: 1 }} 
+                style={{ marginTop: '1rem' }}
+              >
                 {feedback === 'correct' ? (
-                  <div style={{ color: 'var(--success)' }}><CheckCircle2 /> Dobrze!</div>
+                  <div style={{ color: 'var(--success)', fontWeight: 700 }}>
+                    <CheckCircle2 size={20} /> Dobrze!
+                  </div>
                 ) : (
                   <div style={{ color: 'var(--error)' }}>
-                    <XCircle /> Poprawnie: <strong>{current.ru}</strong>
+                    <XCircle size={20} /> Poprawnie: <strong>{current.ru}</strong>
+                    <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>Słówko wróci na koniec kolejki.</p>
                   </div>
                 )}
               </motion.div>
@@ -128,8 +251,17 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
               Sprawdź
             </button>
           ) : (
-            <button className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} onClick={handleNext} type="button">
-              Dalej
+            <button 
+              className="btn btn-primary" 
+              style={{ 
+                width: '100%', 
+                marginTop: '1.5rem',
+                background: feedback === 'wrong' ? 'var(--error)' : 'var(--primary)'
+              }} 
+              onClick={handleNext} 
+              type="button"
+            >
+              {feedback === 'correct' ? 'Dalej' : 'Rozumiem'}
             </button>
           )}
         </form>

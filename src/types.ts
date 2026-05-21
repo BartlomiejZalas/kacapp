@@ -36,3 +36,10 @@ export interface Lesson {
   enumeratives: Enumerative[];
   hardWords: Word[];
 }
+
+export interface Category {
+  id: string;
+  name: string;
+  lessons: Lesson[];
+}
+
