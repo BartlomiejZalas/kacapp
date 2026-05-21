@@ -68,7 +68,6 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
     const isCorrect = feedback === 'correct';
 
     if (isCorrect) {
-      // If passed flawlessly (first time in this session), remove from persistent queues
       if (!wrongInSession.has(currentWord.ru)) {
         const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
         if (reviewsNewStr) {
@@ -91,7 +90,6 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
         setIsFinished(true);
       }
     } else {
-      // Wrong entry - move word to the end of the queue
       const updatedQueue = [...sessionQueue];
       updatedQueue.push(currentWord);
       setSessionQueue(updatedQueue);
@@ -285,7 +283,7 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
             </button>
           )}
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 };
