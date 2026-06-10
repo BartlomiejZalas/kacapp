@@ -100,24 +100,20 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, on
   };
 
   const handleNextTesting = () => {
+    const currentWord = testWords[currentIndex];
+    
     if (feedback === 'wrong') {
-       setFeedback(null);
-       return;
+       setTestWords(prev => [...prev, currentWord]);
     }
     
     setFeedback(null);
     setUserInput('');
+    
     if (currentIndex < testWords.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
-      if (wrongWords.length > 0) {
-        setTestWords([...wrongWords]);
-        setWrongWords([]);
-        setCurrentIndex(0);
-      } else {
-        saveProgress();
-        setPhase('finished');
-      }
+      saveProgress();
+      setPhase('finished');
     }
   };
 
@@ -201,14 +197,14 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, on
                   >
                     {feedback === 'correct' ? (
                       <div style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                        <CheckCircle2 /> Brawo!
+                        <CheckCircle2 /> Poprawnie!
                       </div>
                     ) : (
                       <div style={{ color: 'var(--error)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                          <XCircle /> Niezupełnie...
+                          <XCircle /> Prawie...
                         </div>
-                        <p>Poprawna odpowiedź: <strong>{testWords[currentIndex].ru}</strong></p>
+                        <p>Powinno być: <strong>{testWords[currentIndex].ru}</strong></p>
                       </div>
                     )}
                   </motion.div>
@@ -222,11 +218,15 @@ export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, on
               ) : (
                 <button 
                   className="btn btn-primary" 
-                  style={{ width: '100%', marginTop: '1.5rem' }} 
+                  style={{ 
+                    width: '100%', 
+                    marginTop: '1.5rem',
+                    background: feedback === 'wrong' ? 'var(--error)' : 'var(--primary)'
+                  }} 
                   onClick={handleNextTesting} 
                   type="button"
                 >
-                  {feedback === 'correct' ? 'Dalej' : 'Spróbuj jeszcze raz'}
+                  Dalej
                 </button>
               )}
             </form>

@@ -431,6 +431,113 @@ export const categories: Category[] = [
           { pl: 'ludzie', ru: 'люди', image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400' },
         ],
       },
+      {
+        id: '4',
+        name: 'Kraje i zawody',
+        icon: 'Globe',
+        dialog: `- Здравствуйте! Давайте познакомимся.|Dzień dobry! Zapoznajmy się.
+- Меня зовут Анна. А вас?|Nazywam się Anna. A pan/pani?
+- Меня зовут Иван. Очень приятно.|Nazywam się Iwan. Bardzo mi miło.
+- Взаимно. Иван, где вы живёте?|Wzajemnie. Iwanie, gdzie pan mieszka?
+- Я живу в Москве. А вы?|Mieszkam w Moskwie. A pani?
+- А я живу в Варшаве.|A ja mieszkam w Warszawie.
+- Вы говорите по-русски?|Czy mówi pan po rosyjsku?
+- Да, немного. Я ещё учусь.|Tak, trochę. Jeszcze się uczę.
+- Кто вы по профессии?|Kim pan jest z zawodu?
+- Я инженер. А вы?|Jestem inżynierem. A pani?
+- Я учительница, работаю в школе.|Jestem nauczycielką, pracuję w szkole.`,
+        words: [
+          { pl: 'Polska', ru: 'Польша', image: 'https://images.unsplash.com/photo-1512813583141-b9219a658148?w=400' },
+          { pl: 'Rosja', ru: 'Россия', image: 'https://images.unsplash.com/photo-1513326738677-b964603b136d?w=400' },
+          { pl: 'Niemcy', ru: 'Германия', image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400' },
+          { pl: 'Francja', ru: 'Франция', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400' },
+          { pl: 'Anglia', ru: 'Англия', image: 'https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=400' },
+          { pl: 'Ameryka', ru: 'Америка', image: 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400' },
+          { pl: 'Chiny', ru: 'Китай', image: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400' },
+          { pl: 'nauczyciel', ru: 'учитель', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400' },
+          { pl: 'lekarz', ru: 'врач', image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400' },
+          { pl: 'student', ru: 'студент', image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400' },
+        ],
+        conjugations: [
+          {
+            title: 'Czasownik "жить" (mieszkać)',
+            rows: [
+              { pronoun: 'я', verb: 'живу' },
+              { pronoun: 'ты', verb: 'живёшь' },
+              { pronoun: 'он/она', verb: 'живёт' },
+              { pronoun: 'мы', verb: 'живём' },
+              { pronoun: 'вы', verb: 'живёте' },
+              { pronoun: 'они', verb: 'живут' },
+            ],
+          },
+          {
+            title: 'Czasownik "говорить" (mówić)',
+            rows: [
+              { pronoun: 'я', verb: 'говорю' },
+              { pronoun: 'ты', verb: 'говоришь' },
+              { pronoun: 'он/она', verb: 'говорит' },
+              { pronoun: 'мы', verb: 'говорим' },
+              { pronoun: 'вы', verb: 'говорите' },
+              { pronoun: 'они', verb: 'говорят' },
+            ],
+          },
+        ],
+        unusualPhrases: [
+          {
+            pl: 'Skąd jesteś? (Pochodzenie)',
+            ru: 'Я из...',
+            explanation: 'Używamy "из" + dopełniacz (Genitive).',
+            examples: [
+              { pl: 'Jestem z Polski', ru: 'Я из Польши' },
+              { pl: 'Jestem z Rosji', ru: 'Я из России' },
+              { pl: 'On jest z Niemiec', ru: 'Он из Германии' },
+              { pl: 'Ona jest z Ameryki', ru: 'Она из Америки' },
+              { pl: 'My jesteśmy z Anglii', ru: 'Мы из Англии' },
+            ]
+          },
+          {
+            pl: 'Mówić w języku...',
+            ru: 'Говорить по-...',
+            explanation: 'Używamy konstrukcji "по-" + przymiotnik zakończony na "-и".',
+            examples: [
+              { pl: 'Mówię po rosyjsku', ru: 'Я говорю по-русски' },
+              { pl: 'Mówisz po polsku?', ru: 'Ты говоришь по-польски?' },
+              { pl: 'Mówimy po angielsku', ru: 'Мы говориm по-английски' },
+              { pl: 'On mówi po niemiecku', ru: 'Он говорит по-немецки' },
+              { pl: 'Ona mówi po francusku', ru: 'Она говорит по-французски' },
+            ]
+          },
+        ],
+        sentences: [
+          { pl: 'Gdzie pan/pani mieszka?', ru: 'Где вы живёте?' },
+          { pl: 'Mówię trochę po rosyjsku.', ru: 'Я немного говорю по-русски.' },
+          { pl: 'Kim jesteś z zawodu?', ru: 'Кто ты по профессии?' },
+          { pl: 'Pracuję w biurze.', ru: 'Я работаю в офисе.' },
+          { pl: 'Bardzo mi miło.', ru: 'Очень приятно.' },
+        ],
+        enumeratives: [
+          { pl: 'polski', ru: 'польский' },
+          { pl: 'rosyjski', ru: 'русский' },
+          { pl: 'angielski', ru: 'английский' },
+          { pl: 'niemiecki', ru: 'немецкий' },
+          { pl: 'francuski', ru: 'французский' },
+          { pl: 'chiński', ru: 'китайский' },
+          { pl: 'hiszpański', ru: 'испанский' },
+          { pl: 'włoski', ru: 'итальянский' },
+        ],
+        hardWords: [
+          { pl: 'inżynier', ru: 'инженер', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400' },
+          { pl: 'kelner', ru: 'официант', image: 'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=400' },
+          { pl: 'nauczycielka', ru: 'учительница', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400' },
+          { pl: 'szkoła', ru: 'школа', image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400' },
+          { pl: 'szpital', ru: 'больница', image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce2?w=400' },
+          { pl: 'biuro', ru: 'офис', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400' },
+          { pl: 'zawód', ru: 'профессия', image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400' },
+          { pl: 'miło cię poznać', ru: 'приятно познакомиться', image: 'https://images.unsplash.com/photo-1521791136064-7986c2923216?w=400' },
+          { pl: 'narodowość', ru: 'национальность', image: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=400' },
+          { pl: 'kraj', ru: 'страна', image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400' },
+        ],
+      },
     ],
   },
   {

@@ -51,7 +51,7 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
 
   const handleCheck = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (feedback || !userInput.trim()) return;
+    if (feedback === 'correct' || !userInput.trim()) return;
 
     const currentWord = sessionQueue[currentIndex];
     if (normalizeRussian(userInput) === normalizeRussian(currentWord.ru)) {
@@ -66,37 +66,35 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
   const handleNext = () => {
     const currentWord = sessionQueue[currentIndex];
     const isCorrect = feedback === 'correct';
+    const wasEverWrong = wrongInSession.has(currentWord.ru);
 
-    if (isCorrect) {
-      if (!wrongInSession.has(currentWord.ru)) {
-        const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
-        if (reviewsNewStr) {
-          const reviewsNew: Word[] = JSON.parse(reviewsNewStr);
-          localStorage.setItem('kacapp_reviews_new', JSON.stringify(reviewsNew.filter(w => w.ru !== currentWord.ru)));
-        }
-
-        const dailyPoolStr = localStorage.getItem('kacapp_daily_review_pool');
-        if (dailyPoolStr) {
-          const dailyPool: Word[] = JSON.parse(dailyPoolStr);
-          localStorage.setItem('kacapp_daily_review_pool', JSON.stringify(dailyPool.filter(w => w.ru !== currentWord.ru)));
-        }
+    if (isCorrect && !wasEverWrong) {
+      const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
+      if (reviewsNewStr) {
+        const reviewsNew: Word[] = JSON.parse(reviewsNewStr);
+        localStorage.setItem('kacapp_reviews_new', JSON.stringify(reviewsNew.filter(w => w.ru !== currentWord.ru)));
       }
 
-      setFeedback(null);
-      setUserInput('');
-      if (currentIndex < sessionQueue.length - 1) {
-        setCurrentIndex(currentIndex + 1);
-      } else {
-        setIsFinished(true);
+      const dailyPoolStr = localStorage.getItem('kacapp_daily_review_pool');
+      if (dailyPoolStr) {
+        const dailyPool: Word[] = JSON.parse(dailyPoolStr);
+        localStorage.setItem('kacapp_daily_review_pool', JSON.stringify(dailyPool.filter(w => w.ru !== currentWord.ru)));
       }
-    } else {
+    }
+
+    if (wasEverWrong) {
       const updatedQueue = [...sessionQueue];
       updatedQueue.push(currentWord);
       setSessionQueue(updatedQueue);
-      
-      setFeedback(null);
-      setUserInput('');
+    }
+
+    setFeedback(null);
+    setUserInput('');
+    
+    if (currentIndex < sessionQueue.length - 1) {
       setCurrentIndex(currentIndex + 1);
+    } else {
+      setIsFinished(true);
     }
   };
 
@@ -252,11 +250,11 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
               >
                 {feedback === 'correct' ? (
                   <div style={{ color: 'var(--success)', fontWeight: 700 }}>
-                    <CheckCircle2 size={20} /> Dobrze!
+                    <CheckCircle2 size={20} /> Poprawnie!
                   </div>
                 ) : (
                   <div style={{ color: 'var(--error)' }}>
-                    <XCircle size={20} /> Poprawnie: <strong>{current.ru}</strong>
+                    <XCircle size={20} /> Prawie... powinno być: <strong>{current.ru}</strong>
                     <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>Słówko wróci na koniec kolejki.</p>
                   </div>
                 )}
@@ -279,7 +277,7 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
               onClick={handleNext} 
               type="button"
             >
-              {feedback === 'correct' ? 'Dalej' : 'Rozumiem'}
+              Dalej
             </button>
           )}
         </form>

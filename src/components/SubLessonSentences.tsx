@@ -12,7 +12,8 @@ interface SentencesProps {
   onComplete: () => void;
 }
 
-export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lessonId, onComplete }) => {
+export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences: initialSentences, lessonId, onComplete }) => {
+  const [sessionSentences, setSessionSentences] = useState(initialSentences);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -38,9 +39,9 @@ export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lesson
 
   const handleCheck = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (feedback || !userInput.trim()) return;
+    if (feedback === 'correct' || !userInput.trim()) return;
 
-    const current = sentences[currentIndex];
+    const current = sessionSentences[currentIndex];
     if (normalizeRussian(userInput) === normalizeRussian(current.ru)) {
       setFeedback('correct');
       speak(current.ru);
@@ -50,14 +51,15 @@ export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lesson
   };
 
   const handleNext = () => {
+    const current = sessionSentences[currentIndex];
+    
     if (feedback === 'wrong') {
-      setFeedback(null);
-      return;
+      setSessionSentences(prev => [...prev, current]);
     }
 
     setFeedback(null);
     setUserInput('');
-    if (currentIndex < sentences.length - 1) {
+    if (currentIndex < sessionSentences.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
       saveProgress();
@@ -69,7 +71,7 @@ export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lesson
     return <LessonResult title="Lekcja zdania" onBack={onComplete} />;
   }
 
-  const current = sentences[currentIndex];
+  const current = sessionSentences[currentIndex];
 
   return (
     <div className="container fade-in">
@@ -82,12 +84,12 @@ export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lesson
       </button>
 
        <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${((currentIndex + 1) / sentences.length) * 100}%` }}></div>
+          <div className="progress-fill" style={{ width: `${((currentIndex + 1) / sessionSentences.length) * 100}%` }}></div>
         </div>
 
         <div className="card" style={{ textAlign: 'center', paddingBottom: '3rem' }}>
           <span style={{ color: 'var(--secondary)', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700 }}>
-            Napisz zdanie ({currentIndex + 1} / {sentences.length})
+            Napisz zdanie ({currentIndex + 1} / {sessionSentences.length})
           </span>
           <h2 style={{ fontSize: '1.5rem', margin: '1.5rem 0' }}>{current.pl}</h2>
           
@@ -128,14 +130,14 @@ export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lesson
                 >
                   {feedback === 'correct' ? (
                     <div style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                      <CheckCircle2 /> Świetnie!
+                      <CheckCircle2 /> Poprawnie!
                     </div>
                   ) : (
                     <div style={{ color: 'var(--error)' }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <XCircle /> Błąd
+                        <XCircle /> Prawie...
                       </div>
-                      <p>Poprawnie: <strong>{current.ru}</strong></p>
+                      <p>Powinno być: <strong>{current.ru}</strong></p>
                     </div>
                   )}
                 </motion.div>
@@ -147,8 +149,16 @@ export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lesson
                 Sprawdź
               </button>
             ) : (
-              <button className="btn btn-primary" style={{ width: '100%' }} onClick={handleNext} type="button">
-                {feedback === 'correct' ? 'Dalej' : 'Spróbuj ponownie'}
+              <button 
+                className="btn btn-primary" 
+                style={{ 
+                  width: '100%',
+                  background: feedback === 'wrong' ? 'var(--error)' : 'var(--primary)'
+                }} 
+                onClick={handleNext} 
+                type="button"
+              >
+                Dalej
               </button>
             )}
           </form>
