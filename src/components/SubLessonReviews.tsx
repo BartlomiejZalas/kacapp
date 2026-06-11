@@ -82,7 +82,7 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
       }
     }
 
-    if (wasEverWrong) {
+    if (feedback === 'wrong') {
       const updatedQueue = [...sessionQueue];
       updatedQueue.push(currentWord);
       setSessionQueue(updatedQueue);

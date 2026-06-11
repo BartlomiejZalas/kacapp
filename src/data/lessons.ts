@@ -286,7 +286,7 @@ export const categories: Category[] = [
           { pl: 'lodówka', ru: 'холодильник', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400' },
           { pl: 'telewizor', ru: 'телевизор', image: 'https://images.unsplash.com/photo-1593359674290-309995570089?w=400' },
           { pl: 'salon', ru: 'гостиная', image: 'https://images.unsplash.com/photo-1583847268964-b28dc2f51ac9?w=400' },
-          { pl: 'drzwi', ru: 'дверь', image: 'https://images.unsplash.com/photo-1481277542470-605fe2e0e5ef?w=400' },
+          { pl: 'podłoga', ru: 'пол', image: 'https://images.unsplash.com/photo-1581850518616-cee81537e691?w=400' },
         ],
       },
       {
@@ -317,7 +317,7 @@ export const categories: Category[] = [
           { pl: 'córka', ru: 'дочь', image: 'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=400' },
           { pl: 'babcia', ru: 'бабушка', image: 'https://images.unsplash.com/photo-1520699049698-acd2fccb8cc8?w=400' },
           { pl: 'dziadek', ru: 'дедушка', image: 'https://images.unsplash.com/photo-1475149301140-7e3e00504106?w=400' },
-          { pl: 'mąż', ru: 'муж', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400' },
+          { pl: 'dziecko', ru: 'ребёнок', image: 'https://images.unsplash.com/photo-1502086223501-7ea2443f84fd?w=400' },
           { pl: 'żona', ru: 'жена', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400' },
         ],
         conjugations: [
@@ -527,7 +527,7 @@ export const categories: Category[] = [
         ],
         hardWords: [
           { pl: 'inżynier', ru: 'инженер', image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400' },
-          { pl: 'kelner', ru: 'официант', image: 'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=400' },
+          { pl: 'kucharz', ru: 'повар', image: 'https://images.unsplash.com/photo-1577106263724-2c8e03bfe9cf?w=400' },
           { pl: 'nauczycielka', ru: 'учительница', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400' },
           { pl: 'szkoła', ru: 'школа', image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400' },
           { pl: 'szpital', ru: 'больница', image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce2?w=400' },
@@ -536,6 +536,125 @@ export const categories: Category[] = [
           { pl: 'miło cię poznać', ru: 'приятно познакомиться', image: 'https://images.unsplash.com/photo-1521791136064-7986c2923216?w=400' },
           { pl: 'narodowość', ru: 'национальность', image: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=400' },
           { pl: 'kraj', ru: 'страна', image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400' },
+        ],
+      },
+      {
+        id: '5',
+        name: 'Na granicy',
+        icon: 'Plane',
+        dialog: `- Здравствуйте! Ваш паспорт и виза, пожалуйста.|Dzień dobry! Pański paszport i wiza, poproszę.
+- Вот, пожалуйста. И мой паспорт, и паспорт моей жены.|Oto one. Zarówno mój paszport, jak i paszport mojej żony.
+- Какова цель вашего визита?|Jaki jest cel pańskiej wizyty?
+- Мы едем в отпуск к друзьям.|Jedziemy na urlop do przyjaciół.
+- У вас есть вещи для декларирования?|Czy ma pan rzeczy do oclenia?
+- Нет, только личные вещи в чемоданах.|Nie, tylko rzeczy osobiste w walizkach.
+- Откройте этот большой чемодан, пожалуйста.|Proszę otworzyć tę dużą walizkę.
+- Конечно. Здесь одежда, книги и один подарок.|Ociewiście. Tutaj są ubrania, książki i jeden prezent.
+- Что это за конверт?|Co to za koperta?
+- Это письмо для моего друга.|To jest list dla mojego przyjaciela.
+- Хорошо. Всё в порядке. Счастливого пути!|Dobrze. Wszystko w porządku. Szczęśliwej drogi!
+- Спасибо большое. До свидания!|Dziękuję bardzo. Do widzenia!`,
+        words: [
+          { pl: 'paszport', ru: 'паспорт', image: 'https://images.unsplash.com/photo-1544027993-37dbfe43562a?w=400' },
+          { pl: 'wiza', ru: 'виза', image: 'https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?w=400' },
+          { pl: 'granica', ru: 'граница', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400' },
+          { pl: 'walizka', ru: 'чемодан', image: 'https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400' },
+          { pl: 'bagaż', ru: 'багаж', image: 'https://images.unsplash.com/photo-1581553676214-4632b4ec378c?w=400' },
+          { pl: 'cło', ru: 'таможня', image: 'https://images.unsplash.com/photo-1520699049698-acd2fccb8cc8?w=400' },
+          { pl: 'podpis', ru: 'подпись', image: 'https://images.unsplash.com/photo-1512428559083-560df5f4b95d?w=400' },
+          { pl: 'list', ru: 'письмо', image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?w=400' },
+          { pl: 'prezent', ru: 'подарок', image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400' },
+          { pl: 'mąż', ru: 'муж', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400' },
+        ],
+        conjugations: [
+          {
+            title: 'Rzeczownik "муж" (mąż)',
+            rows: [
+              { pronoun: 'mianownik', verb: 'муж' },
+              { pronoun: 'dopełniacz', verb: 'мужа' },
+              { pronoun: 'celownik', verb: 'мужу' },
+              { pronoun: 'biernik', verb: 'мужа' },
+              { pronoun: 'narzędnik', verb: 'мужем' },
+              { pronoun: 'miejscownik', verb: 'муже' },
+            ],
+          },
+          {
+            title: 'Rzeczownik "чемодан" (walizka)',
+            rows: [
+              { pronoun: 'mianownik', verb: 'чемодан' },
+              { pronoun: 'dopełniacz', verb: 'чемодана' },
+              { pronoun: 'celownik', verb: 'чемодану' },
+              { pronoun: 'biernik', verb: 'чемодан' },
+              { pronoun: 'narzędnik', verb: 'чемоданом' },
+              { pronoun: 'miejscownik', verb: 'чемодане' },
+            ],
+          },
+          {
+            title: 'Rzeczownik "письмо" (list)',
+            rows: [
+              { pronoun: 'mianownik', verb: 'письмо' },
+              { pronoun: 'dopełniacz', verb: 'письма' },
+              { pronoun: 'celownik', verb: 'письму' },
+              { pronoun: 'biernik', verb: 'письмо' },
+              { pronoun: 'narzędnik', verb: 'письмом' },
+              { pronoun: 'miejscownik', verb: 'письме' },
+            ],
+          },
+          {
+            title: 'Czasownik "ехать" (jechać)',
+            rows: [
+              { pronoun: 'я', verb: 'еду' },
+              { pronoun: 'ты', verb: 'едешь' },
+              { pronoun: 'он/она', verb: 'едет' },
+              { pronoun: 'мы', verb: 'едем' },
+              { pronoun: 'вы', verb: 'едете' },
+              { pronoun: 'они', verb: 'едут' },
+            ],
+          },
+        ],
+        unusualPhrases: [
+          {
+            pl: 'Cel wizyty',
+            ru: 'Цель визита',
+            explanation: 'Standardowe pytanie na granicy o powód przyjazdu.',
+            examples: [
+              { pl: 'Jaki jest cel wizyty?', ru: 'Какова цель визита?' },
+              { pl: 'Mój cel to turystyka.', ru: 'Моя цель — туризм.' },
+              { pl: 'Jadę do pracy.', ru: 'Я еду по работе.' },
+            ]
+          },
+          {
+            pl: 'Szczęśliwej drogi!',
+            ru: 'Счастливого пути!',
+            explanation: 'Tradycyjne życzenie dobrej podróży.',
+          },
+        ],
+        sentences: [
+          { pl: 'Poproszę pański paszport.', ru: 'Ваш паспорт, пожалуйста.' },
+          { pl: 'Nie mam nic do oclenia.', ru: 'У меня нет вещей для декларирования.' },
+          { pl: 'To jest mój bagaż.', ru: 'Это мой bagaż.' },
+          { pl: 'Gdzie jest granica?', ru: 'Где граница?' },
+          { pl: 'Jadę do przyjaciół.', ru: 'Я еду к друзьям.' },
+        ],
+        enumeratives: [
+          { pl: 'samolot', ru: 'самолёт' },
+          { pl: 'pociąg', ru: 'поезд' },
+          { pl: 'samochód', ru: 'машина' },
+          { pl: 'autobus', ru: 'автобус' },
+          { pl: 'statek', ru: 'корабль' },
+          { pl: 'bilet', ru: 'билет' },
+          { pl: 'miejsce', ru: 'место' },
+          { pl: 'peron', ru: 'платформа' },
+        ],
+        hardWords: [
+          { pl: 'deklaracja', ru: 'декларация', image: 'https://images.unsplash.com/photo-1554224155-1696413565d3?w=400' },
+          { pl: 'kontrola', ru: 'контроль', image: 'https://images.unsplash.com/photo-1541872703-74c5e443d1fe?w=400' },
+          { pl: 'przepis', ru: 'правило', image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400' },
+          { pl: 'zakaz', ru: 'запрет', image: 'https://images.unsplash.com/photo-1541872703-74c5e443d1fe?w=400' },
+          { pl: 'pozwolenie', ru: 'разрешение', image: 'https://images.unsplash.com/photo-1512428559083-560df5f4b95d?w=400' },
+          { pl: 'obywatelstwo', ru: 'гражданство', image: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=400' },
+          { pl: 'celnik', ru: 'таможенник', image: 'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=400' },
+          { pl: 'przegląd', ru: 'осмотр', image: 'https://images.unsplash.com/photo-1541872703-74c5e443d1fe?w=400' },
         ],
       },
     ],
@@ -644,7 +763,7 @@ export const categories: Category[] = [
           { pl: 'pokój', ru: 'мир' },
           { pl: 'konflikt', ru: 'конфликт' },
           { pl: 'dyplomacja', ru: 'дипломатия' },
-          { pl: 'granica', ru: 'граница' },
+          { pl: 'stolica', ru: 'столица' },
           { pl: 'dowódca', ru: 'командир' },
           { pl: 'żołnierz', ru: 'солдат' },
           { pl: 'atak', ru: 'атака' },
