@@ -657,6 +657,132 @@ export const categories: Category[] = [
           { pl: 'przegląd', ru: 'осмотр', image: 'https://images.unsplash.com/photo-1541872703-74c5e443d1fe?w=400' },
         ],
       },
+      {
+        id: '6',
+        name: 'Na dworcu w Moskwie',
+        icon: 'Train',
+        dialog: `- Мамочка, Агата - твоя подружка?|Mamusiu, czy Agata jest twoją koleżanką?
+- Да, дочка.|Tak, córeczko.
+- Какая она?|Jaka ona jest?
+- Красивая. У неё голубые глаза и светлые волосы...|Ładna. Ma niebieskie oczy, jasne włosy...
+- Это она! Агата! Агата!|To ona! To ona!
+- Маша, отпусти тётю. Слышишь меня? Это не Агата.|Masza! Puść panią! To nie jest Agata.
+- Вы не Агата?|Nie jest pani Agata?
+- Мне очень жаль, но я не Агата. Меня зовут Ева.|Przykro mi, ale nie. Mam na imię Ewa.
+- Извините нас, пожалуйста, мы встречаем мою подругу и дочка очень волнуется.|Proszę nam wybaczyć! Czekamy na przyjazd mojej koleżanki i córka jest bardzo przejęta.
+- Ничего страшного.|Nic złego się nie stało.
+- Маша, веди себя прилично!|Masza, zachowuj się przyzwoicie!
+- Мамочка, а ты давно не виделась с Агатой?|Mamusiu, jak długo nie widziałaś Agaty?
+- Сто лет...|Sto lat...
+- Ну, тогда ты её не узнаешь!|W takim razie ty jej nie poznasz!
+- Почему?|Dlaczego?
+- Она уже старая!|Ona już jest stara!
+- И вовсе она не старая.|Wcale nie jest stara.
+- А я говорю - старая!|Mówię ci, że jest!
+- Она совсем не изменилась.|Ona w ogóle się не zmieniła.
+- Откуда ты знаешь?|Skąd wiesz?
+- Она стоит за тобой и ждёт, когда ты с ней поздороваешься. Привет Агатка! Рада тебя видеть!|Ona stoi za tobą i czeka, aż się z nią przywitasz. Cześć Agatka! Cieszę się, że cię widzę!
+- Лена! Как я по тебе соскучилась! А это твоя дочка?|Lena! Ależ stęskniłam się za tobą! A to twoja córka?
+- Да, это мой сорванец.|Tak, to mój urwis.
+- Как дела, Машенька?|Jak się masz, Maszeńka?
+- Привет! Ты так долго ехала... Я устала тебя встречать!|Cześć! Tak długo jechałaś... Zmęczyłam się czekaniem na ciebie!
+- Едем домой. Моя машина стоит недалеко от вокзала. Агата, дай мне твою сумку.|Jedziemy do domu. Mój samochód stoi niedaleko dworca. Agata, daj mi twoją torbę.`,
+        words: [
+          { pl: 'dworzec', ru: 'вокзал', image: 'https://images.unsplash.com/photo-1548625361-f6dbfa5a5664?w=400' },
+          { pl: 'samochód', ru: 'машина', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400' },
+          { pl: 'dziewczyna', ru: 'девушка', image: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?w=400' },
+          { pl: 'kobieta', ru: 'женщина', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400' },
+          { pl: 'mężczyzna', ru: 'мужчина', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400' },
+          { pl: 'oczy', ru: 'глаза', image: 'https://images.unsplash.com/photo-1512429815049-514d2a1387d7?w=400' },
+          { pl: 'włosy', ru: 'вóлосы', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400' },
+          { pl: 'przyjaciółka', ru: 'подруга', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400' },
+        ],
+        conjugations: [
+          {
+            title: 'Czasownik "идти" (iść)',
+            rows: [
+              { pronoun: 'я', verb: 'иду' },
+              { pronoun: 'ты', verb: 'идёшь' },
+              { pronoun: 'он/она', verb: 'идёт' },
+              { pronoun: 'мы', verb: 'идём' },
+              { pronoun: 'вы', verb: 'идёте' },
+              { pronoun: 'они', verb: 'идут' },
+            ],
+          },
+          {
+            title: 'Czasownik "нести" (nieść)',
+            rows: [
+              { pronoun: 'я', verb: 'несу' },
+              { pronoun: 'ты', verb: 'несёшь' },
+              { pronoun: 'он/она', verb: 'несёт' },
+              { pronoun: 'мы', verb: 'несём' },
+              { pronoun: 'вы', verb: 'несёте' },
+              { pronoun: 'они', verb: 'несут' },
+            ],
+          },
+          {
+            title: 'Czasownik "везти" (wieźć)',
+            rows: [
+              { pronoun: 'я', verb: 'везу' },
+              { pronoun: 'ты', verb: 'везёшь' },
+              { pronoun: 'он/она', verb: 'везёт' },
+              { pronoun: 'мы', verb: 'везём' },
+              { pronoun: 'вы', verb: 'везёте' },
+              { pronoun: 'они', verb: 'везут' },
+            ],
+          },
+          {
+            title: 'Czasownik "ждать" (czekać)',
+            rows: [
+              { pronoun: 'я', verb: 'жду' },
+              { pronoun: 'ты', verb: 'ждёшь' },
+              { pronoun: 'он/она', verb: 'ждёт' },
+              { pronoun: 'мы', verb: 'ждём' },
+              { pronoun: 'вы', verb: 'ждёте' },
+              { pronoun: 'они', verb: 'ждут' },
+            ],
+          },
+        ],
+        unusualPhrases: [
+          {
+            pl: 'Zwroty grzecznościowe i codzienne',
+            ru: 'Вежливые и повседневные фразы',
+            explanation: 'Przydatne zwroty podczas spotkań i w codziennych sytuacjach.',
+            examples: [
+              { pl: 'Nic złego się nie stało', ru: 'Ничего страшного' },
+              { pl: 'Bardzo mi przykro', ru: 'Мне очень жаль' },
+              { pl: 'Zachowuj się przyzwoicie!', ru: 'Веди себя прилично!' },
+              { pl: 'Cieszę się, że cię widzę!', ru: 'Рада тебя видеть!' },
+            ]
+          },
+        ],
+        sentences: [
+          { pl: 'Jak się masz?', ru: 'Как дела?' },
+          { pl: 'Skąd wiesz?', ru: 'Откуда ты знаешь?' },
+          { pl: 'Ależ stęskniłam się za tobą!', ru: 'Как я по тебе соскучилась!' },
+          { pl: 'Jaka ona jest?', ru: 'Какая она?' },
+        ],
+        enumeratives: [
+          { pl: 'północ', ru: 'север' },
+          { pl: 'południe', ru: 'юг' },
+          { pl: 'wschód', ru: 'восток' },
+          { pl: 'zachód', ru: 'запад' },
+          { pl: 'północny wschód', ru: 'северо-восток' },
+          { pl: 'południowy wschód', ru: 'юго-восток' },
+          { pl: 'południowy zachód', ru: 'юго-запад' },
+          { pl: 'północny zachód', ru: 'северо-запад' },
+        ],
+        hardWords: [
+          { pl: 'przejmować się', ru: 'волноваться' },
+          { pl: 'zmienić się', ru: 'измениться' },
+          { pl: 'przywitać się', ru: 'поздороваться' },
+          { pl: 'przeczytać', ru: 'прочитать' },
+          { pl: 'pomóc', ru: 'помочь' },
+          { pl: 'nieść', ru: 'нести' },
+          { pl: 'wieźć', ru: 'везти' },
+          { pl: 'czekać', ru: 'ждать' },
+        ],
+      },
     ],
   },
   {
