@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Trophy, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { updateStreak } from '../utils/streak';
 
 interface ResultProps {
   title: string;
@@ -8,6 +9,10 @@ interface ResultProps {
 }
 
 export const LessonResult: React.FC<ResultProps> = ({ title, onBack }) => {
+  useEffect(() => {
+    updateStreak();
+  }, []);
+
   return (
     <div className="container fade-in" style={{ textAlign: 'center', paddingTop: '4rem' }}>
       <motion.div

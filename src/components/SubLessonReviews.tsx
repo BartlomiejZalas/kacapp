@@ -5,6 +5,7 @@ import { CheckCircle2, XCircle, ArrowLeft, RotateCcw, PartyPopper, Ghost, Zap } 
 import { motion, AnimatePresence } from 'framer-motion';
 import { CyrillicKeyboard } from './CyrillicKeyboard';
 import { normalizeRussian } from '../utils/normalize';
+import { updateStreak } from '../utils/streak';
 
 interface ReviewsProps {
   onBack: () => void;
@@ -12,7 +13,6 @@ interface ReviewsProps {
 
 export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
   const [sessionQueue, setSessionQueue] = useState<Word[]>([]);
-  const [wrongInSession, setWrongInSession] = useState<Set<string>>(new Set());
   const [currentIndex, setCurrentIndex] = useState(0);
   const [userInput, setUserInput] = useState('');
   const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
@@ -59,16 +59,14 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
       speak(currentWord.ru);
     } else {
       setFeedback('wrong');
-      setWrongInSession(prev => new Set(prev).add(currentWord.ru));
     }
   };
 
   const handleNext = () => {
     const currentWord = sessionQueue[currentIndex];
     const isCorrect = feedback === 'correct';
-    const wasEverWrong = wrongInSession.has(currentWord.ru);
 
-    if (isCorrect && !wasEverWrong) {
+    if (isCorrect) {
       const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
       if (reviewsNewStr) {
         const reviewsNew: Word[] = JSON.parse(reviewsNewStr);
@@ -94,6 +92,7 @@ export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
     if (currentIndex < sessionQueue.length - 1) {
       setCurrentIndex(currentIndex + 1);
     } else {
+      updateStreak();
       setIsFinished(true);
     }
   };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { categories } from '../data/lessons';
-import { Utensils, Home, Users, Shield, ChevronRight, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Utensils, Home, Users, Shield, ChevronRight, CheckCircle2, RotateCcw, Flame } from 'lucide-react';
+import { getStreakData } from '../utils/streak';
 
 const icons: Record<string, any> = {
   Utensils,
@@ -17,6 +18,7 @@ interface DashboardProps {
 export const Dashboard: React.FC<DashboardProps> = ({ onSelectLesson, onOpenReviews }) => {
   const [completedSubLessons, setCompletedSubLessons] = useState<Record<string, string[]>>({});
   const [reviewCount, setReviewCount] = useState(0);
+  const [streakData, setStreakData] = useState({ streak: 0, isActiveToday: false });
 
   useEffect(() => {
     const progress = localStorage.getItem('kacapp_sub_progress');
@@ -41,6 +43,8 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectLesson, onOpenRevi
       const newDailyPoolSize = Math.min(potentialRandom.length, 20);
       setReviewCount(reviewsNew.length + newDailyPoolSize);
     }
+    
+    setStreakData(getStreakData());
   }, []);
 
   return (
@@ -67,6 +71,45 @@ export const Dashboard: React.FC<DashboardProps> = ({ onSelectLesson, onOpenRevi
           </div>
         </div>
       </header>
+
+      <div 
+        className="card flex"
+        style={{ 
+          marginBottom: '1rem',
+          background: streakData.isActiveToday ? 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)' : 'var(--background)',
+          color: streakData.isActiveToday ? 'white' : 'var(--text)',
+          border: streakData.isActiveToday ? 'none' : '2px dashed #f97316',
+          justifyContent: 'flex-start',
+          alignItems: 'center',
+          padding: '1.5rem',
+          gap: '1rem',
+          boxShadow: streakData.isActiveToday ? '0 10px 25px -5px rgba(249, 115, 22, 0.4)' : 'none'
+        }}
+      >
+        <div style={{
+          background: streakData.isActiveToday ? 'rgba(255, 255, 255, 0.2)' : '#fff1f2',
+          padding: '1rem',
+          borderRadius: '50%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: streakData.isActiveToday ? 'white' : '#f97316'
+        }}>
+          <Flame size={32} />
+        </div>
+        <div>
+          <h3 style={{ margin: 0, fontSize: '1.25rem', color: streakData.isActiveToday ? 'white' : 'var(--text)' }}>
+            {streakData.streak} {streakData.streak === 1 ? 'dzień' : 'dni'} z rzędu!
+          </h3>
+          <p style={{ margin: '0.25rem 0 0', fontSize: '0.875rem', color: streakData.isActiveToday ? 'rgba(255,255,255,0.9)' : 'var(--secondary)' }}>
+            {streakData.isActiveToday 
+              ? 'Świetna robota! Wróć jutro, by podtrzymać serię.' 
+              : streakData.streak === 0 
+                ? 'Zrób dziś lekcję, aby rozpocząć swoją serię!'
+                : 'Zrób dziś lekcję, aby nie stracić streaka!'}
+          </p>
+        </div>
+      </div>
 
       <div 
         className="card flex" 
