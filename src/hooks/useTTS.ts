@@ -13,12 +13,18 @@ export const useTTS = () => {
       }
       
       const voices = window.speechSynthesis.getVoices();
+      console.log('Available ru voices:', voices.filter(v => v.lang.startsWith('ru')).map(v => v.name));
       const langVoices = voices.filter(v => v.lang.startsWith(lang));
-      
+
       if (langVoices.length > 0) {
         const googleVoices = langVoices.filter(v => v.name.includes('Google'));
         const availableVoices = googleVoices.length > 0 ? googleVoices : langVoices;
-        utterance.voice = availableVoices[voiceVariant % availableVoices.length];
+        const selectedVoice = availableVoices[voiceVariant % availableVoices.length];
+        utterance.voice = selectedVoice;
+        // If there is only one voice, vary pitch to simulate a different voice
+        if (availableVoices.length === 1) {
+          utterance.pitch = voiceVariant % 2 === 0 ? 0.9 : 1.4;
+        }
       }
 
       
