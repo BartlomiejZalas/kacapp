@@ -783,6 +783,97 @@ export const categories: Category[] = [
           { pl: 'czekać', ru: 'ждать' },
         ],
       },
+      {
+        id: '7',
+        name: 'W klasie',
+        icon: 'BookOpen',
+        dialog: `- Доброе утро! Садитесь, пожалуйста.|Dzień dobry! Proszę usiąść.
+- Где твоя тетрадь и домашнее задание?|Gdzie jest twój zeszyt i zadanie domowe?
+- Извините, я забыл тетрадь дома.|Przepraszam, zapomniałem zeszytu w domu.
+- Возьми ручку и напиши на листке бумаги сто раз:|Weź długopis i napisz na kartce sto razy:
+- "Я не забуду домашнее задание".|"Nie zapomnę zadania domowego".
+- Хорошо, я напишу. Можно мне подойти к доске?|Dobrze, napiszę. Czy mogę podejść do tablicy?
+- Да, подойди к доске и напиши мелом это слово.|Tak, podejdź do tablicy i napisz kredą to słowo.
+- Какое слово мне написать?|Jakie słowo mam napisać?
+- Напиши слово "школа".|Napisz słowo "szkoła".
+- Готово. Я могу сесть на место?|Gotowe. Czy mogę usiąść na miejsce?
+- Да, садись. Молодец.|Tak, siadaj. Zuch.`,
+        words: [
+          { pl: 'plecak', ru: 'рюкзак', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400' },
+          { pl: 'klasa', ru: 'класс', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400' },
+          { pl: 'tablica', ru: 'доска', image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400' },
+          { pl: 'kreda', ru: 'мел', image: 'https://images.unsplash.com/photo-1587309995166-51e29eef26f8?w=400' },
+          { pl: 'zeszyt', ru: 'тетрадь', image: 'https://images.unsplash.com/photo-1531346878377-244bb797d3ef?w=400' },
+          { pl: 'długopis', ru: 'ручка', image: 'https://images.unsplash.com/photo-1585336261022-680e2a5ce249?w=400' },
+          { pl: 'ołówek', ru: 'карандаш', image: 'https://images.unsplash.com/photo-1520005705307-8ec968f3a39e?w=400' },
+          { pl: 'zadanie domowe', ru: 'домашнее задание', image: 'https://images.unsplash.com/photo-1456406644174-8ddd4cd52a06?w=400' },
+          { pl: 'kartka papieru', ru: 'листок бумаги', image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400' },
+          { pl: 'książka', ru: 'книга', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400' },
+        ],
+        conjugations: [
+          {
+            title: 'Czasownik "писать" (pisać)',
+            rows: [
+              { pronoun: 'я', verb: 'пишу' },
+              { pronoun: 'ты', verb: 'пишешь' },
+              { pronoun: 'он/она', verb: 'пишет' },
+              { pronoun: 'мы', verb: 'пишем' },
+              { pronoun: 'вы', verb: 'пишете' },
+              { pronoun: 'они', verb: 'пишут' },
+            ],
+          },
+          {
+            title: 'Czasownik "забыть" (zapomnieć)',
+            rows: [
+              { pronoun: 'я', verb: 'забуду' },
+              { pronoun: 'ты', verb: 'забудешь' },
+              { pronoun: 'он/она', verb: 'забудет' },
+              { pronoun: 'мы', verb: 'забудем' },
+              { pronoun: 'вы', verb: 'забудете' },
+              { pronoun: 'они', verb: 'забудут' },
+            ],
+          },
+        ],
+        unusualPhrases: [
+          {
+            pl: 'Podejść do tablicy',
+            ru: 'Подойти к доске',
+            explanation: 'W języku rosyjskim używamy przyimka "к" z celownikiem, gdy mówimy o zbliżaniu się do kogoś lub czegoś.',
+            examples: [
+              { pl: 'Podejdź do tablicy!', ru: 'Подойди к доске!' },
+              { pl: 'Idę do nauczyciela.', ru: 'Я иду к учителю.' },
+            ]
+          },
+        ],
+        sentences: [
+          { pl: 'Proszę usiąść.', ru: 'Садитесь, пожалуйста.' },
+          { pl: 'Gdzie jest twoje zadanie domowe?', ru: 'Где твоё домашнее задание?' },
+          { pl: 'Piszę kredą na tablicy.', ru: 'Я пишу мелом на доске.' },
+          { pl: 'Zapomniałem zeszytu.', ru: 'Я забыл тетрадь.' },
+        ],
+        enumeratives: [
+          { pl: 'matematyka', ru: 'математика' },
+          { pl: 'fizyka', ru: 'физика' },
+          { pl: 'chemia', ru: 'химия' },
+          { pl: 'biologia', ru: 'биология' },
+          { pl: 'historia', ru: 'история' },
+          { pl: 'geografia', ru: 'география' },
+          { pl: 'język polski', ru: 'польский язык' },
+          { pl: 'język angielski', ru: 'английский язык' },
+          { pl: 'wychowanie fizyczne (WF)', ru: 'физкультура' },
+          { pl: 'informatyka', ru: 'информатика' },
+        ],
+        hardWords: [
+          { pl: 'uczyć się', ru: 'учиться' },
+          { pl: 'uczeń', ru: 'ученик' },
+          { pl: 'uczennica', ru: 'ученица' },
+          { pl: 'pisać', ru: 'писать' },
+          { pl: 'czytać', ru: 'читать' },
+          { pl: 'pamiętać', ru: 'помнить' },
+          { pl: 'zapomnieć', ru: 'забыть' },
+          { pl: 'wiedzieć', ru: 'знать' },
+        ],
+      },
     ],
   },
   {
