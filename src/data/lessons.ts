@@ -694,7 +694,7 @@ export const categories: Category[] = [
           { pl: 'kobieta', ru: 'женщина', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400' },
           { pl: 'mężczyzna', ru: 'мужчина', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400' },
           { pl: 'oczy', ru: 'глаза', image: 'https://images.unsplash.com/photo-1512429815049-514d2a1387d7?w=400' },
-          { pl: 'włosy', ru: 'вóлосы', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400' },
+          { pl: 'włosy', ru: 'волосы', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400' },
           { pl: 'przyjaciółka', ru: 'подруга', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400' },
         ],
         conjugations: [
