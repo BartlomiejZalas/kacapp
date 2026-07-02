@@ -790,8 +790,7 @@ export const categories: Category[] = [
         dialog: `- Доброе утро! Садитесь, пожалуйста.|Dzień dobry! Proszę usiąść.
 - Где твоя тетрадь и домашнее задание?|Gdzie jest twój zeszyt i zadanie domowe?
 - Извините, я забыл тетрадь дома.|Przepraszam, zapomniałem zeszytu w domu.
-- Возьми ручку и напиши на листке бумаги сто раз:|Weź długopis i napisz na kartce sto razy:
-- "Я не забуду домашнее задание".|"Nie zapomnę zadania domowego".
+- Возьми ручку и напиши на листке бумаги сто раз: "Я не забуду домашнее задание".|Weź długopis i napisz na kartce sto razy: "Nie zapomnę zadania domowego"
 - Хорошо, я напишу. Можно мне подойти к доске?|Dobrze, napiszę. Czy mogę podejść do tablicy?
 - Да, подойди к доске и напиши мелом это слово.|Tak, podejdź do tablicy i napisz kredą to słowo.
 - Какое слово мне написать?|Jakie słowo mam napisać?
