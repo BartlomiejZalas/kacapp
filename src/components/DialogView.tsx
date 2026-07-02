@@ -51,7 +51,7 @@ export const DialogView: React.FC<DialogProps> = ({ dialog, lessonId, onComplete
     setPlayingIndex(startIndex);
     speak(lines[startIndex].ru, 'ru-RU', () => {
       playSequentially(startIndex + 1);
-    });
+    }, startIndex % 2);
   };
 
   const toggleTranslation = (idx: number) => {
@@ -115,7 +115,7 @@ export const DialogView: React.FC<DialogProps> = ({ dialog, lessonId, onComplete
                   }}
                   onClick={() => {
                     setPlayingIndex(idx);
-                    speak(line.ru, 'ru-RU', () => setPlayingIndex(null));
+                    speak(line.ru, 'ru-RU', () => setPlayingIndex(null), idx % 2);
                   }}
                 >
                   <MessageCircle size={16} />
