@@ -1,8 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import type { Word } from '../types';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LessonResult } from './LessonResult';
-import { ArrowLeft } from 'lucide-react';
+import { ExerciseShell } from './ExerciseShell';
+import { EmptyState } from './EmptyState';
+import { useTTS } from '../hooks/useTTS';
+import { shuffle } from '../utils/shuffle';
+import { markSubLessonDone } from '../utils/progress';
 
 interface MatchProps {
   words: Word[];
@@ -18,130 +22,157 @@ interface Item {
 }
 
 export const SubLessonMatch: React.FC<MatchProps> = ({ words, lessonId, onComplete }) => {
-  const [plItems, setPlItems] = useState<Item[]>([]);
-  const [ruItems, setRuItems] = useState<Item[]>([]);
+  const [round, setRound] = useState(0);
   const [selectedPl, setSelectedPl] = useState<Item | null>(null);
   const [selectedRu, setSelectedRu] = useState<Item | null>(null);
   const [matchedPairIds, setMatchedPairIds] = useState<string[]>([]);
-  const [feedback, setFeedback] = useState<'wrong' | null>(null);
+  const [wrongAttempts, setWrongAttempts] = useState<Word[]>([]);
+  const [isWrong, setIsWrong] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
+  const timers = useRef<number[]>([]);
+  const { speak } = useTTS();
 
-  useEffect(() => {
-    const pl = words.map(w => ({ id: `pl-${w.ru}`, text: w.pl, type: 'pl' as const, pairId: w.ru }));
-    const ru = words.map(w => ({ id: `ru-${w.ru}`, text: w.ru, type: 'ru' as const, pairId: w.ru }));
-    setPlItems([...pl].sort(() => Math.random() - 0.5));
-    setRuItems([...ru].sort(() => Math.random() - 0.5));
-  }, [words]);
+  const columns = useMemo(() => {
+    // round w zależnościach: „Powtórz ćwiczenie” tasuje kafelki od nowa.
+    void round;
+    return {
+      pl: shuffle(words.map((w) => ({ id: `pl-${w.ru}`, text: w.pl, type: 'pl' as const, pairId: w.ru }))),
+      ru: shuffle(words.map((w) => ({ id: `ru-${w.ru}`, text: w.ru, type: 'ru' as const, pairId: w.ru }))),
+    };
+  }, [words, round]);
 
-  const saveProgress = () => {
-    const progress = localStorage.getItem('kacapp_sub_progress');
-    const allProgress = progress ? JSON.parse(progress) : {};
-    const lessonProgress = allProgress[lessonId] || [];
-    if (!lessonProgress.includes('match')) {
-      lessonProgress.push('match');
-      allProgress[lessonId] = lessonProgress;
-      localStorage.setItem('kacapp_sub_progress', JSON.stringify(allProgress));
+  useEffect(
+    () => () => {
+      timers.current.forEach(clearTimeout);
+      window.speechSynthesis.cancel();
+    },
+    []
+  );
+
+  const resolvePair = (pl: Item, ru: Item) => {
+    if (pl.pairId === ru.pairId) {
+      speak(ru.text);
+      const newMatched = [...matchedPairIds, pl.pairId];
+      setMatchedPairIds(newMatched);
+      setSelectedPl(null);
+      setSelectedRu(null);
+      if (newMatched.length === words.length) {
+        markSubLessonDone(lessonId, 'match');
+        timers.current.push(window.setTimeout(() => setIsFinished(true), 700));
+      }
+      return;
     }
-  };
 
-  const handleSelect = (item: Item) => {
-    if (matchedPairIds.includes(item.pairId)) return;
-
-    if (item.type === 'pl') {
-      setSelectedPl(selectedPl?.id === item.id ? null : item);
-    } else {
-      setSelectedRu(selectedRu?.id === item.id ? null : item);
+    setIsWrong(true);
+    const missed = words.find((w) => w.ru === ru.pairId);
+    if (missed && !wrongAttempts.some((w) => w.ru === missed.ru)) {
+      setWrongAttempts((prev) => [...prev, missed]);
     }
-  };
-
-  useEffect(() => {
-    if (selectedPl && selectedRu) {
-      if (selectedPl.pairId === selectedRu.pairId) {
-        const newMatched = [...matchedPairIds, selectedPl.pairId];
-        setMatchedPairIds(newMatched);
+    timers.current.push(
+      window.setTimeout(() => {
+        setIsWrong(false);
         setSelectedPl(null);
         setSelectedRu(null);
-        if (newMatched.length === words.length) {
-          saveProgress();
-          setTimeout(() => setIsFinished(true), 800);
-        }
-      } else {
-        setFeedback('wrong');
-        setTimeout(() => {
-          setFeedback(null);
-          setSelectedPl(null);
-          setSelectedRu(null);
-        }, 500);
-      }
-    }
-  }, [selectedPl, selectedRu, matchedPairIds, words.length]);
+      }, 600)
+    );
+  };
 
-  if (isFinished) {
-    return <LessonResult title="Dopasuj pary" onBack={onComplete} />;
+  const select = (item: Item) => {
+    if (isWrong || matchedPairIds.includes(item.pairId)) return;
+
+    if (item.type === 'pl') {
+      const next = selectedPl?.id === item.id ? null : item;
+      setSelectedPl(next);
+      if (next && selectedRu) resolvePair(next, selectedRu);
+    } else {
+      const next = selectedRu?.id === item.id ? null : item;
+      setSelectedRu(next);
+      if (next && selectedPl) resolvePair(selectedPl, next);
+    }
+  };
+
+  const stats = useMemo(
+    () => ({
+      total: words.length,
+      mastered: words.length,
+      answers: words.length + wrongAttempts.length,
+      correct: words.length,
+      mistakes: wrongAttempts.map((w) => ({ id: w.ru, prompt: w.pl, answer: w.ru })),
+    }),
+    [words.length, wrongAttempts]
+  );
+
+  if (words.length === 0) {
+    return (
+      <EmptyState title="Brak par" description="Ta lekcja nie ma jeszcze słówek do dopasowania." onBack={onComplete} />
+    );
   }
 
-  return (
-    <div className="container fade-in">
-      <button className="btn btn-secondary" onClick={onComplete} style={{ marginBottom: '1rem' }}>
-        <ArrowLeft size={20} /> Wróć
-      </button>
-      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Dopasuj pary</h2>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', justifyItems: 'center' }}>
-        <div className="grid" style={{ width: '100%' }}>
-          <AnimatePresence>
-            {plItems.map((item) => !matchedPairIds.includes(item.pairId) && (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                onClick={() => handleSelect(item)}
-                className="card"
-                style={{
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                  padding: '1rem',
-                  margin: '0 auto',
-                  width: '100%',
-                  background: selectedPl?.id === item.id ? 'var(--primary)' : 'var(--card)',
-                  color: selectedPl?.id === item.id ? 'white' : 'var(--text)',
-                  border: feedback === 'wrong' && selectedPl?.id === item.id ? '2px solid var(--error)' : 'none',
-                }}
-              >
-                {item.text}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+  if (isFinished) {
+    return (
+      <LessonResult
+        title="Dopasuj pary"
+        stats={stats}
+        onRetry={() => {
+          setRound((r) => r + 1);
+          setMatchedPairIds([]);
+          setWrongAttempts([]);
+          setSelectedPl(null);
+          setSelectedRu(null);
+          setIsFinished(false);
+        }}
+        onBack={onComplete}
+      />
+    );
+  }
 
-        <div className="grid" style={{ width: '100%' }}>
-          <AnimatePresence>
-            {ruItems.map((item) => !matchedPairIds.includes(item.pairId) && (
-              <motion.div
+  const renderColumn = (items: Item[], selected: Item | null, dir: number) => (
+    <div className="grid" style={{ width: '100%', gap: '0.6rem', alignContent: 'start' }}>
+      <AnimatePresence>
+        {items.map(
+          (item) =>
+            !matchedPairIds.includes(item.pairId) && (
+              <motion.button
                 key={item.id}
-                initial={{ opacity: 0, x: 20 }}
+                type="button"
+                layout
+                initial={{ opacity: 0, x: dir * 20 }}
                 animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.5 }}
-                onClick={() => handleSelect(item)}
-                className="card"
+                exit={{ opacity: 0, scale: 0.6 }}
+                onClick={() => select(item)}
+                className="card card-interactive"
                 style={{
-                  cursor: 'pointer',
                   textAlign: 'center',
-                  padding: '1rem',
-                  margin: '0 auto',
+                  padding: '0.9rem 0.5rem',
+                  margin: 0,
                   width: '100%',
-                  background: selectedRu?.id === item.id ? 'var(--primary)' : 'var(--card)',
-                  color: selectedRu?.id === item.id ? 'white' : 'var(--text)',
-                  border: feedback === 'wrong' && selectedRu?.id === item.id ? '2px solid var(--error)' : 'none',
+                  font: 'inherit',
+                  fontWeight: 600,
+                  background: selected?.id === item.id ? 'var(--primary)' : 'var(--card)',
+                  color: selected?.id === item.id ? 'white' : 'var(--text)',
+                  borderColor: isWrong && selected?.id === item.id ? 'var(--error)' : 'var(--border)',
                 }}
               >
                 {item.text}
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      </div>
+              </motion.button>
+            )
+        )}
+      </AnimatePresence>
     </div>
+  );
+
+  return (
+    <ExerciseShell
+      title="Dopasuj pary"
+      subtitle="Kliknij polskie słowo i jego rosyjski odpowiednik."
+      onBack={onComplete}
+      progress={(matchedPairIds.length / words.length) * 100}
+      progressLabel={`Dopasowane ${matchedPairIds.length} / ${words.length}`}
+    >
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+        {renderColumn(columns.pl, selectedPl, -1)}
+        {renderColumn(columns.ru, selectedRu, 1)}
+      </div>
+    </ExerciseShell>
   );
 };

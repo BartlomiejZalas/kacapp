@@ -1,13 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowRight, Zap, ArrowLeft, CheckCircle2, XCircle } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ArrowRight, Zap, Volume2 } from 'lucide-react';
+import { useTTS } from '../hooks/useTTS';
+import { useQuiz } from '../hooks/useQuiz';
 import { LessonResult } from './LessonResult';
-import { CyrillicKeyboard } from './CyrillicKeyboard';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ExerciseShell } from './ExerciseShell';
+import { QuizCard } from './QuizCard';
+import { EmptyState } from './EmptyState';
+import { markSubLessonDone } from '../utils/progress';
 
 interface UnusualProps {
-  phrases: { 
-    pl: string; 
-    ru: string; 
+  phrases: {
+    pl: string;
+    ru: string;
     explanation?: string;
     examples?: { pl: string; ru: string }[];
   }[];
@@ -16,172 +20,151 @@ interface UnusualProps {
 }
 
 export const SubLessonUnusual: React.FC<UnusualProps> = ({ phrases, lessonId, onComplete }) => {
-  const [phase, setPhase] = useState<'learning' | 'testing' | 'finished'>('learning');
-  const [currentPhraseIdx, setCurrentPhraseIdx] = useState(0);
-  const [currentExampleIdx, setCurrentExampleIdx] = useState(0);
-  const [userInput, setUserInput] = useState('');
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const [phase, setPhase] = useState<'learning' | 'testing'>('learning');
+  const [learnIndex, setLearnIndex] = useState(0);
+  const { speak } = useTTS();
+
+  // Testujemy samą regułę i każdy jej przykład - wcześniej reguła bywała pomijana.
+  const questions = useMemo(
+    () =>
+      phrases.flatMap((phrase) => [
+        { id: phrase.ru, prompt: phrase.pl, answer: phrase.ru, context: 'Reguła' },
+        ...(phrase.examples ?? []).map((ex) => ({
+          id: ex.ru,
+          prompt: ex.pl,
+          answer: ex.ru,
+          context: phrase.pl,
+        })),
+      ]),
+    [phrases]
+  );
+  const quiz = useQuiz(questions, { onAnswerRevealed: speak });
+
+  useEffect(() => () => window.speechSynthesis.cancel(), []);
 
   useEffect(() => {
-    return () => {
-      window.speechSynthesis.cancel();
-    };
-  }, []);
+    if (quiz.finished) markSubLessonDone(lessonId, 'unusual');
+  }, [quiz.finished, lessonId]);
 
-  const handleNextLearning = () => {
-    setPhase('testing');
-    setCurrentPhraseIdx(0);
-    setCurrentExampleIdx(0);
-  };
-
-  const handleCheck = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (feedback || !userInput.trim()) return;
-
-    const currentPhrase = phrases[currentPhraseIdx];
-    const correct = currentPhrase.examples 
-      ? currentPhrase.examples[currentExampleIdx].ru.toLowerCase()
-      : currentPhrase.ru.toLowerCase();
-
-    if (userInput.trim().toLowerCase() === correct) {
-      setFeedback('correct');
-    } else {
-      setFeedback('wrong');
-    }
-  };
-
-  const saveProgress = () => {
-    const progress = localStorage.getItem('kacapp_sub_progress');
-    const allProgress = progress ? JSON.parse(progress) : {};
-    const lessonProgress = allProgress[lessonId] || [];
-    if (!lessonProgress.includes('unusual')) {
-      lessonProgress.push('unusual');
-      allProgress[lessonId] = lessonProgress;
-      localStorage.setItem('kacapp_sub_progress', JSON.stringify(allProgress));
-    }
-  };
-
-  const handleNextTesting = () => {
-    if (feedback === 'wrong') {
-      setFeedback(null);
-      return;
-    }
-    setFeedback(null);
-    setUserInput('');
-
-    const currentPhrase = phrases[currentPhraseIdx];
-    if (currentPhrase.examples && currentExampleIdx < currentPhrase.examples.length - 1) {
-      setCurrentExampleIdx(currentExampleIdx + 1);
-    } else if (currentPhraseIdx < phrases.length - 1) {
-      setCurrentPhraseIdx(currentPhraseIdx + 1);
-      setCurrentExampleIdx(0);
-    } else {
-      saveProgress();
-      setPhase('finished');
-    }
-  };
-
-  if (phase === 'finished') {
-    return <LessonResult title="Niecodzienne związki słów" onBack={onComplete} />;
+  if (phrases.length === 0) {
+    return (
+      <EmptyState
+        title="Brak związków słów"
+        description="Ta lekcja nie ma jeszcze materiału w tej sekcji."
+        onBack={onComplete}
+      />
+    );
   }
 
-  const currentPhrase = phrases[currentPhraseIdx];
+  if (quiz.finished) {
+    return (
+      <LessonResult
+        title="Związki słów"
+        stats={quiz.stats}
+        onRetry={() => {
+          quiz.restart();
+          setPhase('learning');
+          setLearnIndex(0);
+        }}
+        onBack={onComplete}
+      />
+    );
+  }
+
+  if (phase === 'learning') {
+    const phrase = phrases[learnIndex];
+    return (
+      <ExerciseShell
+        title="Związki słów"
+        subtitle="Konstrukcje, które w rosyjskim działają inaczej niż po polsku."
+        onBack={onComplete}
+        progress={((learnIndex + 1) / phrases.length) * 100}
+        progressLabel={`Reguła ${learnIndex + 1} / ${phrases.length}`}
+      >
+        <div className="card">
+          <span className="badge" style={{ background: '#f5f3ff', color: 'var(--accent)' }}>
+            <Zap size={14} /> Reguła
+          </span>
+          <div className="flex" style={{ justifyContent: 'space-between', marginTop: '0.75rem' }}>
+            <h1 style={{ fontSize: '1.6rem' }}>{phrase.ru}</h1>
+            <button className="btn btn-ghost" onClick={() => speak(phrase.ru)} aria-label="Przeczytaj">
+              <Volume2 size={20} />
+            </button>
+          </div>
+          <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>{phrase.pl}</p>
+
+          {phrase.explanation && (
+            <div
+              style={{
+                padding: '0.9rem 1rem',
+                background: '#faf5ff',
+                borderRadius: 'var(--radius-sm)',
+                borderLeft: '4px solid var(--accent)',
+                marginBottom: '1rem',
+              }}
+            >
+              {phrase.explanation}
+            </div>
+          )}
+
+          {phrase.examples && phrase.examples.length > 0 && (
+            <div style={{ background: 'var(--surface)', padding: '0.9rem', borderRadius: 'var(--radius-sm)' }}>
+              <span className="eyebrow" style={{ marginBottom: '0.5rem' }}>
+                Przykłady
+              </span>
+              {phrase.examples.map((ex) => (
+                <div
+                  key={ex.ru}
+                  className="flex"
+                  style={{ justifyContent: 'space-between', gap: '0.5rem', padding: '0.35rem 0' }}
+                >
+                  <div style={{ fontSize: '0.95rem' }}>
+                    <strong>{ex.ru}</strong>
+                    <span style={{ color: 'var(--text-muted)' }}> — {ex.pl}</span>
+                  </div>
+                  <button className="btn btn-ghost" onClick={() => speak(ex.ru)} aria-label="Przeczytaj przykład">
+                    <Volume2 size={16} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <button
+          className="btn btn-primary btn-block"
+          onClick={() => (learnIndex < phrases.length - 1 ? setLearnIndex(learnIndex + 1) : setPhase('testing'))}
+        >
+          {learnIndex < phrases.length - 1 ? 'Następna reguła' : 'Zacznij test'} <ArrowRight size={20} />
+        </button>
+      </ExerciseShell>
+    );
+  }
 
   return (
-    <div className="container fade-in">
-      <button 
-        className="btn btn-secondary" 
-        onClick={() => { window.speechSynthesis.cancel(); onComplete(); }} 
-        style={{ marginBottom: '1rem' }}
-      >
-        <ArrowLeft size={20} /> Wróć
-      </button>
-
-      {phase === 'learning' ? (
-        <>
-          <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Niecodzienne związki słów</h2>
-          {phrases.map((phrase, idx) => (
-            <div key={idx} className="card">
-              <div className="flex" style={{ color: 'var(--accent)', marginBottom: '1rem' }}>
-                <Zap /> <strong>Reguła</strong>
-              </div>
-              <h1 style={{ fontSize: '1.75rem', marginBottom: '0.5rem' }}>{phrase.ru}</h1>
-              <p style={{ fontSize: '1.1rem', color: 'var(--secondary)', marginBottom: '1rem' }}>{phrase.pl}</p>
-              {phrase.explanation && (
-                <div style={{ padding: '1rem', background: 'var(--background)', borderRadius: '0.5rem', borderLeft: '4px solid var(--accent)', marginBottom: '1rem' }}>
-                  {phrase.explanation}
-                </div>
-              )}
-              {phrase.examples && (
-                <div style={{ textAlign: 'left', background: '#f8fafc', padding: '0.75rem', borderRadius: '0.5rem' }}>
-                   <p style={{ fontSize: '0.8rem', fontWeight: 700, color: 'var(--secondary)', marginBottom: '0.5rem' }}>PRZYKŁADY:</p>
-                   {phrase.examples.map((ex, i) => (
-                     <div key={i} style={{ marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                       • <strong>{ex.ru}</strong> - {ex.pl}
-                     </div>
-                   ))}
-                </div>
-              )}
-            </div>
-          ))}
-          <button className="btn btn-primary" style={{ width: '100%' }} onClick={handleNextLearning}>
-            Rozumiem, sprawdź mnie! <ArrowRight size={20} />
-          </button>
-        </>
-      ) : (
-        <div className="card" style={{ textAlign: 'center', paddingBottom: '3rem' }}>
-          <span style={{ color: 'var(--secondary)', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700 }}>
-            Wpisz poprawnie przykład
-          </span>
-          <h2 style={{ fontSize: '1.5rem', margin: '1rem 0' }}>
-            {currentPhrase.examples ? currentPhrase.examples[currentExampleIdx].pl : currentPhrase.pl}
-          </h2>
-          
-          <form onSubmit={handleCheck}>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <input 
-                type="text" 
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Wpisz po rosyjsku..."
-                autoFocus
-                disabled={feedback === 'correct'}
-                style={{ textAlign: 'center', fontSize: '1.25rem' }}
-              />
-              <CyrillicKeyboard 
-                onInput={(char) => !feedback && setUserInput(prev => prev + char)} 
-                onBackspace={() => !feedback && setUserInput(prev => prev.slice(0, -1))}
-              />
-            </div>
-            
-            <AnimatePresence>
-              {feedback && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} style={{ marginTop: '1rem' }}>
-                  {feedback === 'correct' ? (
-                    <div style={{ color: 'var(--success)' }}><CheckCircle2 /> Dobrze!</div>
-                  ) : (
-                    <div style={{ color: 'var(--error)' }}>
-                      <XCircle /> Poprawnie: <strong>
-                        {currentPhrase.examples ? currentPhrase.examples[currentExampleIdx].ru : currentPhrase.ru}
-                      </strong>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {!feedback ? (
-              <button className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} type="submit">
-                Sprawdź
-              </button>
-            ) : (
-              <button className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} onClick={handleNextTesting} type="button">
-                {feedback === 'correct' ? 'Dalej' : 'Spróbuj ponownie'}
-              </button>
-            )}
-          </form>
-        </div>
+    <ExerciseShell
+      title="Związki słów"
+      subtitle="Wpisz konstrukcję po rosyjsku."
+      onBack={onComplete}
+      progress={quiz.progress}
+      progressLabel={`Opanowane ${quiz.stats.mastered} / ${quiz.stats.total}`}
+    >
+      {quiz.current && (
+        <QuizCard
+          context={quiz.current.context}
+          prompt={quiz.current.prompt}
+          answer={quiz.current.answer}
+          input={quiz.input}
+          onInputChange={quiz.setInput}
+          feedback={quiz.feedback}
+          onCheck={quiz.check}
+          onGiveUp={quiz.giveUp}
+          onNext={quiz.next}
+          onSpeak={() => speak(quiz.current!.answer)}
+          multiline
+          isLast={quiz.position >= quiz.queueLength}
+        />
       )}
-    </div>
+    </ExerciseShell>
   );
 };

@@ -27,14 +27,14 @@ export const categories: Category[] = [
         words: [
           { pl: 'owoce', ru: 'фрукты', image: 'https://images.unsplash.com/photo-1519996529931-28324d5a630e?w=400' },
           { pl: 'warzywa', ru: 'овощи', image: 'https://images.unsplash.com/photo-1566385101042-1a0aa0c1268c?w=400' },
-          { pl: 'herbata', ru: 'чай', image: 'https://images.unsplash.com/photo-1544787210-22bbd921bd14?w=400' },
+          { pl: 'herbata', ru: 'чай' },
           { pl: 'zupa', ru: 'суп', image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=400' },
           { pl: 'chleb', ru: 'хлеб', image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400' },
-          { pl: 'woda', ru: 'вода', image: 'https://images.unsplash.com/photo-1548919973-5cfe5d4fc494?w=400' },
+          { pl: 'woda', ru: 'вода' },
           { pl: 'cukier', ru: 'сахар', image: 'https://images.unsplash.com/photo-1581441363689-1f3c3c414635?w=400' },
           { pl: 'sól', ru: 'соль', image: 'https://images.unsplash.com/photo-1518110925495-5fe2fda0442c?w=400' },
-          { pl: 'kawa', ru: 'кофе', image: 'https://images.unsplash.com/photo-1541167760496-162955ed8a9f?w=400' },
-          { pl: 'mleko', ru: 'молоко', image: 'https://images.unsplash.com/photo-1550583724-1255d1426639?w=400' },
+          { pl: 'kawa', ru: 'кофе' },
+          { pl: 'mleko', ru: 'молоко' },
         ],
         conjugations: [
           {
@@ -103,7 +103,7 @@ export const categories: Category[] = [
               { pl: 'Kawa bez cukru', ru: 'Кофе без сахара' },
               { pl: 'Woda z cytryną', ru: 'Вода с лимоном' },
               { pl: 'Zupa bez soli', ru: 'Суп без соли' },
-              { pl: 'Chcę зupę z chlebem', ru: 'Я хочу суп с хлебом' },
+              { pl: 'Chcę zupę z chlebem', ru: 'Я хочу суп с хлебом' },
             ]
           },
         ],
@@ -136,7 +136,7 @@ export const categories: Category[] = [
           { pl: 'kelner', ru: 'официант', image: 'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=400' },
           { pl: 'rachunek', ru: 'счёт', image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400' },
           { pl: 'napój', ru: 'напиток', image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400' },
-          { pl: 'sok', ru: 'сок', image: 'https://images.unsplash.com/photo-1600271886332-699bb2798b98?w=400' },
+          { pl: 'sok', ru: 'сок' },
         ],
       },
       {
@@ -161,11 +161,11 @@ export const categories: Category[] = [
         words: [
           { pl: 'dom', ru: 'дом', image: 'https://images.unsplash.com/photo-1518780664697-55e3ad937233?w=400' },
           { pl: 'okno', ru: 'окно', image: 'https://images.unsplash.com/photo-1503708928676-1cb796a0891e?w=400' },
-          { pl: 'drzwi', ru: 'дверь', image: 'https://images.unsplash.com/photo-1481277542470-605fe2e0e5ef?w=400' },
+          { pl: 'drzwi', ru: 'дверь' },
           { pl: 'stół', ru: 'стол', image: 'https://images.unsplash.com/photo-1533090161767-e6ffed986c88?w=400' },
           { pl: 'krzesło', ru: 'стул', image: 'https://images.unsplash.com/photo-1503602642458-232111445657?w=400' },
-          { pl: 'kuchnia', ru: 'кухня', image: 'https://images.unsplash.com/photo-1556911220-e152748a3f88?w=400' },
-          { pl: 'łóżko', ru: 'кровать', image: 'https://images.unsplash.com/photo-1505693419173-42b92568f190?w=400' },
+          { pl: 'kuchnia', ru: 'кухня' },
+          { pl: 'łóżko', ru: 'кровать' },
           { pl: 'lustro', ru: 'зеркало', image: 'https://images.unsplash.com/photo-1618220179428-22790b461013?w=400' },
           { pl: 'szafa', ru: 'шкаф', image: 'https://images.unsplash.com/photo-1595428774223-ef52624120d2?w=400' },
           { pl: 'ściana', ru: 'стена', image: 'https://images.unsplash.com/photo-1516542076529-1ea3854896f2?w=400' },
@@ -284,9 +284,9 @@ export const categories: Category[] = [
           { pl: 'piętro', ru: 'этаж', image: 'https://images.unsplash.com/photo-1515263487990-61b07816b324?w=400' },
           { pl: 'klucze', ru: 'ключи', image: 'https://images.unsplash.com/photo-1582139329536-e7284fece509?w=400' },
           { pl: 'lodówka', ru: 'холодильник', image: 'https://images.unsplash.com/photo-1584622650111-993a426fbf0a?w=400' },
-          { pl: 'telewizor', ru: 'телевизор', image: 'https://images.unsplash.com/photo-1593359674290-309995570089?w=400' },
-          { pl: 'salon', ru: 'гостиная', image: 'https://images.unsplash.com/photo-1583847268964-b28dc2f51ac9?w=400' },
-          { pl: 'podłoga', ru: 'пол', image: 'https://images.unsplash.com/photo-1581850518616-cee81537e691?w=400' },
+          { pl: 'telewizor', ru: 'телевизор' },
+          { pl: 'salon', ru: 'гостиная' },
+          { pl: 'podłoga', ru: 'пол' },
         ],
       },
       {
@@ -313,11 +313,11 @@ export const categories: Category[] = [
           { pl: 'tata', ru: 'папа', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400' },
           { pl: 'brat', ru: 'брат', image: 'https://images.unsplash.com/photo-1581952976147-5a2d15560349?w=400' },
           { pl: 'siostra', ru: 'сестра', image: 'https://images.unsplash.com/photo-1543332164-6e82f355badc?w=400' },
-          { pl: 'syn', ru: 'сын', image: 'https://images.unsplash.com/photo-1502086223501-7ea2443f84fd?w=400' },
+          { pl: 'syn', ru: 'сын' },
           { pl: 'córka', ru: 'дочь', image: 'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=400' },
           { pl: 'babcia', ru: 'бабушка', image: 'https://images.unsplash.com/photo-1520699049698-acd2fccb8cc8?w=400' },
-          { pl: 'dziadek', ru: 'дедушка', image: 'https://images.unsplash.com/photo-1475149301140-7e3e00504106?w=400' },
-          { pl: 'dziecko', ru: 'ребёнок', image: 'https://images.unsplash.com/photo-1502086223501-7ea2443f84fd?w=400' },
+          { pl: 'dziadek', ru: 'дедушка' },
+          { pl: 'dziecko', ru: 'ребёнок' },
           { pl: 'żona', ru: 'жена', image: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400' },
         ],
         conjugations: [
@@ -424,7 +424,7 @@ export const categories: Category[] = [
           { pl: 'starszy', ru: 'старший', image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400' },
           { pl: 'młodszy', ru: 'младший', image: 'https://images.unsplash.com/photo-1543332164-6e82f355badc?w=400' },
           { pl: 'dzieci', ru: 'дети', image: 'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=400' },
-          { pl: 'wnuk', ru: 'внук', image: 'https://images.unsplash.com/photo-1502086223501-7ea2443f84fd?w=400' },
+          { pl: 'wnuk', ru: 'внук' },
           { pl: 'wnuczka', ru: 'внучка', image: 'https://images.unsplash.com/photo-1496440737103-cd596325d314?w=400' },
           { pl: 'krewni', ru: 'родственники', image: 'https://images.unsplash.com/photo-1511895426328-dc8714191300?w=400' },
           { pl: 'człowiek', ru: 'человек', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400' },
@@ -447,7 +447,7 @@ export const categories: Category[] = [
 - Я инженер. А вы?|Jestem inżynierem. A pani?
 - Я учительница, работаю в школе.|Jestem nauczycielką, pracuję w szkole.`,
         words: [
-          { pl: 'Polska', ru: 'Польша', image: 'https://images.unsplash.com/photo-1512813583141-b9219a658148?w=400' },
+          { pl: 'Polska', ru: 'Польша' },
           { pl: 'Rosja', ru: 'Россия', image: 'https://images.unsplash.com/photo-1513326738677-b964603b136d?w=400' },
           { pl: 'Niemcy', ru: 'Германия', image: 'https://images.unsplash.com/photo-1467269204594-9661b134dd2b?w=400' },
           { pl: 'Francja', ru: 'Франция', image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=400' },
@@ -456,7 +456,7 @@ export const categories: Category[] = [
           { pl: 'Chiny', ru: 'Китай', image: 'https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=400' },
           { pl: 'nauczyciel', ru: 'учитель', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400' },
           { pl: 'lekarz', ru: 'врач', image: 'https://images.unsplash.com/photo-1537368910025-700350fe46c7?w=400' },
-          { pl: 'student', ru: 'студент', image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400' },
+          { pl: 'student', ru: 'студент' },
         ],
         conjugations: [
           {
@@ -502,7 +502,7 @@ export const categories: Category[] = [
             examples: [
               { pl: 'Mówię po rosyjsku', ru: 'Я говорю по-русски' },
               { pl: 'Mówisz po polsku?', ru: 'Ты говоришь по-польски?' },
-              { pl: 'Mówimy po angielsku', ru: 'Мы говориm по-английски' },
+              { pl: 'Mówimy po angielsku', ru: 'Мы говорим по-английски' },
               { pl: 'On mówi po niemiecku', ru: 'Он говорит по-немецки' },
               { pl: 'Ona mówi po francusku', ru: 'Она говорит по-французски' },
             ]
@@ -530,10 +530,10 @@ export const categories: Category[] = [
           { pl: 'kucharz', ru: 'повар', image: 'https://images.unsplash.com/photo-1577106263724-2c8e03bfe9cf?w=400' },
           { pl: 'nauczycielka', ru: 'учительница', image: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400' },
           { pl: 'szkoła', ru: 'школа', image: 'https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400' },
-          { pl: 'szpital', ru: 'больница', image: 'https://images.unsplash.com/photo-1586773860418-d37222d8fce2?w=400' },
+          { pl: 'szpital', ru: 'больница' },
           { pl: 'biuro', ru: 'офис', image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=400' },
           { pl: 'zawód', ru: 'профессия', image: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=400' },
-          { pl: 'miło cię poznać', ru: 'приятно познакомиться', image: 'https://images.unsplash.com/photo-1521791136064-7986c2923216?w=400' },
+          { pl: 'miło cię poznać', ru: 'приятно познакомиться' },
           { pl: 'narodowość', ru: 'национальность', image: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=400' },
           { pl: 'kraj', ru: 'страна', image: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=400' },
         ],
@@ -559,9 +559,9 @@ export const categories: Category[] = [
           { pl: 'wiza', ru: 'виза', image: 'https://images.unsplash.com/photo-1554774853-aae0a22c8aa4?w=400' },
           { pl: 'granica', ru: 'граница', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400' },
           { pl: 'walizka', ru: 'чемодан', image: 'https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400' },
-          { pl: 'bagaż', ru: 'багаж', image: 'https://images.unsplash.com/photo-1581553676214-4632b4ec378c?w=400' },
+          { pl: 'bagaż', ru: 'багаж' },
           { pl: 'cło', ru: 'таможня', image: 'https://images.unsplash.com/photo-1520699049698-acd2fccb8cc8?w=400' },
-          { pl: 'podpis', ru: 'подпись', image: 'https://images.unsplash.com/photo-1512428559083-560df5f4b95d?w=400' },
+          { pl: 'podpis', ru: 'подпись' },
           { pl: 'list', ru: 'письмо', image: 'https://images.unsplash.com/photo-1553413077-190dd305871c?w=400' },
           { pl: 'prezent', ru: 'подарок', image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400' },
           { pl: 'mąż', ru: 'муж', image: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400' },
@@ -632,7 +632,7 @@ export const categories: Category[] = [
         sentences: [
           { pl: 'Poproszę pański paszport.', ru: 'Ваш паспорт, пожалуйста.' },
           { pl: 'Nie mam nic do oclenia.', ru: 'У меня нет вещей для декларирования.' },
-          { pl: 'To jest mój bagaż.', ru: 'Это мой bagaż.' },
+          { pl: 'To jest mój bagaż.', ru: 'Это мой багаж.' },
           { pl: 'Gdzie jest granica?', ru: 'Где граница?' },
           { pl: 'Jadę do przyjaciół.', ru: 'Я еду к друзьям.' },
         ],
@@ -648,13 +648,13 @@ export const categories: Category[] = [
         ],
         hardWords: [
           { pl: 'deklaracja', ru: 'декларация', image: 'https://images.unsplash.com/photo-1554224155-1696413565d3?w=400' },
-          { pl: 'kontrola', ru: 'контроль', image: 'https://images.unsplash.com/photo-1541872703-74c5e443d1fe?w=400' },
+          { pl: 'kontrola', ru: 'контроль' },
           { pl: 'przepis', ru: 'правило', image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400' },
-          { pl: 'zakaz', ru: 'запрет', image: 'https://images.unsplash.com/photo-1541872703-74c5e443d1fe?w=400' },
-          { pl: 'pozwolenie', ru: 'разрешение', image: 'https://images.unsplash.com/photo-1512428559083-560df5f4b95d?w=400' },
+          { pl: 'zakaz', ru: 'запрет' },
+          { pl: 'pozwolenie', ru: 'разрешение' },
           { pl: 'obywatelstwo', ru: 'гражданство', image: 'https://images.unsplash.com/photo-1521295121783-8a321d551ad2?w=400' },
           { pl: 'celnik', ru: 'таможенник', image: 'https://images.unsplash.com/photo-1604328698692-f76ea9498e76?w=400' },
-          { pl: 'przegląd', ru: 'осмотр', image: 'https://images.unsplash.com/photo-1541872703-74c5e443d1fe?w=400' },
+          { pl: 'przegląd', ru: 'осмотр' },
         ],
       },
       {
@@ -688,12 +688,12 @@ export const categories: Category[] = [
 - Привет! Ты так долго ехала... Я устала тебя встречать!|Cześć! Tak długo jechałaś... Zmęczyłam się czekaniem na ciebie!
 - Едем домой. Моя машина стоит недалеко от вокзала. Агата, дай мне твою сумку.|Jedziemy do domu. Mój samochód stoi niedaleko dworca. Agata, daj mi twoją torbę.`,
         words: [
-          { pl: 'dworzec', ru: 'вокзал', image: 'https://images.unsplash.com/photo-1548625361-f6dbfa5a5664?w=400' },
+          { pl: 'dworzec', ru: 'вокзал' },
           { pl: 'samochód', ru: 'машина', image: 'https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400' },
           { pl: 'dziewczyna', ru: 'девушка', image: 'https://images.unsplash.com/photo-1517365830460-955ce3ccd263?w=400' },
           { pl: 'kobieta', ru: 'женщина', image: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=400' },
           { pl: 'mężczyzna', ru: 'мужчина', image: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400' },
-          { pl: 'oczy', ru: 'глаза', image: 'https://images.unsplash.com/photo-1512429815049-514d2a1387d7?w=400' },
+          { pl: 'oczy', ru: 'глаза' },
           { pl: 'włosy', ru: 'волосы', image: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=400' },
           { pl: 'przyjaciółka', ru: 'подруга', image: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=400' },
         ],
@@ -801,10 +801,10 @@ export const categories: Category[] = [
           { pl: 'plecak', ru: 'рюкзак', image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400' },
           { pl: 'klasa', ru: 'класс', image: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=400' },
           { pl: 'tablica', ru: 'доска', image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=400' },
-          { pl: 'kreda', ru: 'мел', image: 'https://images.unsplash.com/photo-1587309995166-51e29eef26f8?w=400' },
-          { pl: 'zeszyt', ru: 'тетрадь', image: 'https://images.unsplash.com/photo-1531346878377-244bb797d3ef?w=400' },
-          { pl: 'długopis', ru: 'ручка', image: 'https://images.unsplash.com/photo-1585336261022-680e2a5ce249?w=400' },
-          { pl: 'ołówek', ru: 'карандаш', image: 'https://images.unsplash.com/photo-1520005705307-8ec968f3a39e?w=400' },
+          { pl: 'kreda', ru: 'мел' },
+          { pl: 'zeszyt', ru: 'тетрадь' },
+          { pl: 'długopis', ru: 'ручка' },
+          { pl: 'ołówek', ru: 'карандаш' },
           { pl: 'zadanie domowe', ru: 'домашнее задание', image: 'https://images.unsplash.com/photo-1456406644174-8ddd4cd52a06?w=400' },
           { pl: 'kartka papieru', ru: 'листок бумаги', image: 'https://images.unsplash.com/photo-1586075010923-2dd4570fb338?w=400' },
           { pl: 'książka', ru: 'книга', image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400' },
@@ -873,6 +873,114 @@ export const categories: Category[] = [
           { pl: 'wiedzieć', ru: 'знать' },
         ],
       },
+      {
+        id: '8',
+        name: 'W bani',
+        icon: 'Flame',
+        dialog: `- Привет! Пойдём завтра в баню?|Cześć! Pójdziemy jutro do bani?
+- С удовольствием! Я давно не парился.|Z przyjemnością! Dawno się nie parzyłem.
+- Не забудь шапку и полотенце.|Nie zapomnij czapki i ręcznika.
+- А зачем в бане шапка?|A po co w bani czapka?
+- Она защищает голову от жара.|Chroni głowę przed żarem.
+- Понятно. А веник ты возьмёшь?|Jasne. A wiecheć weźmiesz?
+- Конечно, берёзовый. Без веника баня не баня.|Oczywiście, brzozowy. Bez wiechcia bania to nie bania.
+- Сколько времени сидят в парилке?|Ile czasu siedzi się w parzelni?
+- Обычно десять минут, потом холодный душ.|Zwykle dziesięć minut, potem zimny prysznic.
+- А что делают после бани?|A co się robi po bani?
+- После бани мы пьём чай или квас.|Po bani pijemy herbatę albo kwas.
+- Отлично! Тогда до завтра.|Świetnie! W takim razie do jutra.
+- До завтра! С лёгким паром!|Do jutra! Lekkiej pary!`,
+        words: [
+          { pl: 'bania (łaźnia)', ru: 'баня' },
+          { pl: 'wiecheć (witka brzozowa)', ru: 'веник' },
+          { pl: 'para', ru: 'пар' },
+          { pl: 'ręcznik', ru: 'полотенце' },
+          { pl: 'czapka (banna)', ru: 'шапка' },
+          { pl: 'mydło', ru: 'мыло' },
+          { pl: 'piec', ru: 'печь' },
+          { pl: 'kwas chlebowy', ru: 'квас' },
+          { pl: 'samowar', ru: 'самовар' },
+          { pl: 'klapki', ru: 'тапочки' },
+        ],
+        conjugations: [
+          {
+            title: 'Czasownik "париться" (parzyć się w bani)',
+            rows: [
+              { pronoun: 'я', verb: 'парюсь' },
+              { pronoun: 'ты', verb: 'паришься' },
+              { pronoun: 'он/она', verb: 'парится' },
+              { pronoun: 'мы', verb: 'паримся' },
+              { pronoun: 'вы', verb: 'паритесь' },
+              { pronoun: 'они', verb: 'парятся' },
+            ],
+          },
+          {
+            title: 'Czasownik "пить" (pić)',
+            rows: [
+              { pronoun: 'я', verb: 'пью' },
+              { pronoun: 'ты', verb: 'пьёшь' },
+              { pronoun: 'он/она', verb: 'пьёт' },
+              { pronoun: 'мы', verb: 'пьём' },
+              { pronoun: 'вы', verb: 'пьёте' },
+              { pronoun: 'они', verb: 'пьют' },
+            ],
+          },
+        ],
+        unusualPhrases: [
+          {
+            pl: 'Lekkiej pary! (powitanie po kąpieli)',
+            ru: 'С лёгким паром',
+            explanation:
+              'Dosłownie "z lekką parą". Zwrot, którym wita się kogoś świeżo po bani lub po kąpieli - polski odpowiednik nie istnieje, po prostu się go zapamiętuje.',
+            examples: [
+              { pl: 'Lekkiej pary, sąsiedzie!', ru: 'С лёгким паром, сосед' },
+              { pl: 'Dziękuję! Bania była świetna.', ru: 'Спасибо Баня была отличная' },
+            ],
+          },
+          {
+            pl: 'Iść do bani / być w bani',
+            ru: 'Идти в баню',
+            explanation:
+              'Ten sam przyimek "в", ale dwa przypadki: kierunek (dokąd?) to biernik - "в баню", a miejsce (gdzie?) to miejscownik - "в бане".',
+            examples: [
+              { pl: 'Idę do bani.', ru: 'Я иду в баню' },
+              { pl: 'Jestem w bani.', ru: 'Я в бане' },
+              { pl: 'Oni siedzą w parzelni.', ru: 'Они сидят в парилке' },
+            ],
+          },
+        ],
+        sentences: [
+          { pl: 'Bez wiechcia bania to nie bania.', ru: 'Без веника баня не баня.' },
+          { pl: 'Nie zapomnij ręcznika.', ru: 'Не забудь полотенце.' },
+          { pl: 'Po bani pijemy herbatę.', ru: 'После бани мы пьём чай.' },
+          { pl: 'W parzelni jest bardzo gorąco.', ru: 'В парилке очень жарко.' },
+          { pl: 'Czapka chroni głowę przed żarem.', ru: 'Шапка защищает голову от жара.' },
+        ],
+        enumeratives: [
+          { pl: 'wiecheć brzozowy', ru: 'берёзовый веник' },
+          { pl: 'wiecheć dębowy', ru: 'дубовый веник' },
+          { pl: 'wiecheć eukaliptusowy', ru: 'эвкалиптовый веник' },
+          { pl: 'parzelnia', ru: 'парилка' },
+          { pl: 'przedbannik (szatnia)', ru: 'предбанник' },
+          { pl: 'kamienie', ru: 'камни' },
+          { pl: 'chochla', ru: 'ковш' },
+          { pl: 'balia', ru: 'кадка' },
+          { pl: 'przerębel', ru: 'прорубь' },
+          { pl: 'zimny prysznic', ru: 'холодный душ' },
+        ],
+        hardWords: [
+          { pl: 'parzyć się (w bani)', ru: 'париться' },
+          { pl: 'grzać się', ru: 'греться' },
+          { pl: 'pocić się', ru: 'потеть' },
+          { pl: 'myć się', ru: 'мыться' },
+          { pl: 'wycierać się', ru: 'вытираться' },
+          { pl: 'ostygnąć', ru: 'остыть' },
+          { pl: 'zanurzyć się', ru: 'окунуться' },
+          { pl: 'odpoczywać', ru: 'отдыхать' },
+          { pl: 'zapraszać', ru: 'приглашать' },
+          { pl: 'gorąco', ru: 'жарко' },
+        ],
+      },
     ],
   },
   {
@@ -901,7 +1009,7 @@ export const categories: Category[] = [
           { pl: 'ćwiczenia wojskowe', ru: 'военные учения' },
           { pl: 'poligon wojskowy', ru: 'военный полигон' },
           { pl: 'uzbrojenie', ru: 'вооружение' },
-          { pl: 'desant', ru: 'приземление' },
+          { pl: 'desant', ru: 'десант' },
           { pl: 'militaryzacja', ru: 'милитаризация' },
           { pl: 'linia ognia', ru: 'линия огня' },
           { pl: 'napaść zbrojna', ru: 'вооруженное нападение' },

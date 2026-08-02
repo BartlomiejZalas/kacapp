@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { useTTS } from '../hooks/useTTS';
-import { Volume2, ArrowRight, MessageCircle, Languages, ArrowLeft } from 'lucide-react';
+import { Play, Square, ArrowRight, Languages, Volume2 } from 'lucide-react';
 import { LessonResult } from './LessonResult';
+import { ExerciseShell } from './ExerciseShell';
+import { EmptyState } from './EmptyState';
 import { motion, AnimatePresence } from 'framer-motion';
+import { markSubLessonDone } from '../utils/progress';
 
 interface DialogProps {
   dialog: string;
@@ -13,164 +16,176 @@ interface DialogProps {
 export const DialogView: React.FC<DialogProps> = ({ dialog, lessonId, onComplete }) => {
   const [isFinished, setIsFinished] = useState(false);
   const [visibleTranslations, setVisibleTranslations] = useState<number[]>([]);
+  const [showAll, setShowAll] = useState(false);
   const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const isPlayingAll = useRef(false);
   const { speak } = useTTS();
-  
-  const lines = dialog.split('\n').filter(line => line.trim() !== '').map(line => {
-    const [ru, pl] = line.split('|');
-    return { ru: ru.trim(), pl: pl?.trim() };
-  });
 
-  useEffect(() => {
-    return () => {
+  const lines = useMemo(
+    () =>
+      dialog
+        .split('\n')
+        .filter((line) => line.trim() !== '')
+        .map((line) => {
+          const [ru, pl] = line.split('|');
+          return { ru: ru.replace(/^-\s*/, '').trim(), pl: pl?.trim() };
+        }),
+    [dialog]
+  );
+
+  useEffect(
+    () => () => {
+      isPlayingAll.current = false;
       window.speechSynthesis.cancel();
-    };
-  }, []);
+    },
+    []
+  );
 
-  const saveProgress = () => {
-    const progress = localStorage.getItem('kacapp_sub_progress');
-    const allProgress = progress ? JSON.parse(progress) : {};
-    const lessonProgress = allProgress[lessonId] || [];
-    if (!lessonProgress.includes('dialog')) {
-      lessonProgress.push('dialog');
-      allProgress[lessonId] = lessonProgress;
-      localStorage.setItem('kacapp_sub_progress', JSON.stringify(allProgress));
-    }
-  };
-
-  const handleFinish = () => {
-    saveProgress();
-    setIsFinished(true);
+  const stop = () => {
+    isPlayingAll.current = false;
+    window.speechSynthesis.cancel();
+    setPlayingIndex(null);
   };
 
   const playSequentially = (startIndex: number) => {
-    if (startIndex >= lines.length) {
+    if (!isPlayingAll.current || startIndex >= lines.length) {
+      isPlayingAll.current = false;
       setPlayingIndex(null);
       return;
     }
     setPlayingIndex(startIndex);
-    speak(lines[startIndex].ru, 'ru-RU', () => {
-      playSequentially(startIndex + 1);
-    }, startIndex % 2);
+    speak(lines[startIndex].ru, 'ru-RU', () => playSequentially(startIndex + 1), startIndex % 2);
   };
 
-  const toggleTranslation = (idx: number) => {
-    if (visibleTranslations.includes(idx)) {
-      setVisibleTranslations(visibleTranslations.filter(i => i !== idx));
-    } else {
-      setVisibleTranslations([...visibleTranslations, idx]);
-    }
+  const playAll = () => {
+    isPlayingAll.current = true;
+    playSequentially(0);
   };
+
+  const toggleTranslation = (idx: number) =>
+    setVisibleTranslations((prev) => (prev.includes(idx) ? prev.filter((i) => i !== idx) : [...prev, idx]));
+
+  if (lines.length === 0) {
+    return <EmptyState title="Brak dialogu" description="Ta lekcja nie ma jeszcze dialogu." onBack={onComplete} />;
+  }
 
   if (isFinished) {
-    return <LessonResult title="Dialog i słuchanie" onBack={onComplete} />;
+    return <LessonResult title="Dialog i słuchanie" onBack={onComplete} onRetry={() => setIsFinished(false)} />;
   }
 
   return (
-    <div className="container fade-in">
-      <div className="flex" style={{ justifyContent: 'space-between', marginBottom: '1.5rem' }}>
-        <button className="btn btn-secondary" onClick={() => { window.speechSynthesis.cancel(); onComplete(); }}>
-          <ArrowLeft size={20} /> Wróć
-        </button>
-        <button 
-          className="btn btn-primary" 
-          onClick={() => playSequentially(0)} 
-          style={{ 
-            borderRadius: '50%', 
-            width: '45px', 
-            height: '45px', 
-            padding: 0,
-            boxShadow: '0 4px 10px rgba(37, 99, 235, 0.3)'
-          }}
-        >
-          <Volume2 size={20} />
-        </button>
-      </div>
-
-      <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Posłuchaj dialogu</h2>
-      
-      <div className="card" style={{ padding: '1rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-          {lines.map((line, idx) => (
-            <div 
-              key={idx} 
-              style={{ 
-                borderBottom: '1px solid #f1f5f9', 
-                padding: '0.5rem',
-                borderRadius: '0.5rem',
-                background: playingIndex === idx ? 'var(--background)' : 'transparent',
-                transition: 'background 0.3s ease'
+    <ExerciseShell
+      title="Dialog i słuchanie"
+      subtitle="Odsłuchaj całość, potem sprawdź tłumaczenia."
+      onBack={onComplete}
+      headerRight={
+        <div className="flex" style={{ gap: '0.5rem' }}>
+          <button
+            className="btn btn-secondary"
+            onClick={() => {
+              setShowAll(!showAll);
+              setVisibleTranslations([]);
+            }}
+          >
+            <Languages size={18} /> {showAll ? 'Ukryj PL' : 'Pokaż PL'}
+          </button>
+          <button
+            className={`btn btn-icon ${playingIndex !== null ? 'btn-danger' : 'btn-primary'}`}
+            onClick={playingIndex !== null ? stop : playAll}
+            aria-label={playingIndex !== null ? 'Zatrzymaj' : 'Odtwórz dialog'}
+          >
+            {playingIndex !== null ? <Square size={18} /> : <Play size={18} />}
+          </button>
+        </div>
+      }
+    >
+      <div className="card" style={{ padding: '0.5rem' }}>
+        {lines.map((line, idx) => {
+          const isMe = idx % 2 === 0;
+          const showPl = showAll || visibleTranslations.includes(idx);
+          return (
+            <div
+              key={idx}
+              style={{
+                padding: '0.6rem 0.75rem',
+                borderRadius: 'var(--radius-sm)',
+                background: playingIndex === idx ? 'var(--primary-soft)' : 'transparent',
+                transition: 'background 0.3s ease',
               }}
             >
-              <div className="flex" style={{ alignItems: 'flex-start', marginBottom: '0.1rem', gap: '0.75rem' }}>
-                <div 
-                  style={{ 
-                    background: 'white', 
-                    padding: '0.4rem', 
-                    borderRadius: '50%', 
-                    color: playingIndex === idx ? 'var(--primary)' : '#94a3b8',
-                    marginTop: '0.1rem',
-                    cursor: 'pointer',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                  }}
+              <div className="flex" style={{ alignItems: 'flex-start', gap: '0.6rem' }}>
+                <button
+                  className="btn btn-ghost"
+                  style={{ padding: '0.35rem', color: playingIndex === idx ? 'var(--primary)' : '#94a3b8' }}
                   onClick={() => {
+                    stop();
                     setPlayingIndex(idx);
                     speak(line.ru, 'ru-RU', () => setPlayingIndex(null), idx % 2);
                   }}
+                  aria-label="Odtwórz linię"
                 >
-                  <MessageCircle size={16} />
-                </div>
+                  <Volume2 size={16} />
+                </button>
                 <div style={{ flex: 1 }}>
-                  <p style={{ 
-                    fontSize: '1.05rem', 
-                    fontWeight: playingIndex === idx ? 700 : 500, 
-                    lineHeight: 1.3,
-                    color: playingIndex === idx ? 'var(--primary)' : 'var(--text)'
-                  }}>
+                  <span
+                    className="eyebrow"
+                    style={{ color: isMe ? 'var(--primary)' : 'var(--accent)', fontSize: '0.65rem' }}
+                  >
+                    {isMe ? 'A' : 'B'}
+                  </span>
+                  <p
+                    style={{
+                      fontSize: '1.05rem',
+                      fontWeight: playingIndex === idx ? 700 : 500,
+                      color: playingIndex === idx ? 'var(--primary)' : 'var(--text)',
+                    }}
+                  >
                     {line.ru}
                   </p>
+                  <AnimatePresence>
+                    {showPl && line.pl && (
+                      <motion.p
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        style={{
+                          fontSize: '0.9rem',
+                          color: 'var(--text-muted)',
+                          fontStyle: 'italic',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {line.pl}
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
                 </div>
-                {line.pl && (
-                  <button 
+                {line.pl && !showAll && (
+                  <button
+                    className="btn btn-ghost"
                     onClick={() => toggleTranslation(idx)}
-                    style={{ 
-                      background: 'none', 
-                      border: 'none', 
-                      color: visibleTranslations.includes(idx) ? 'var(--primary)' : 'var(--secondary)',
-                      cursor: 'pointer',
-                      padding: '0.4rem'
-                    }}
+                    aria-label="Pokaż tłumaczenie"
+                    style={{ color: visibleTranslations.includes(idx) ? 'var(--primary)' : 'var(--text-muted)' }}
                   >
                     <Languages size={18} />
                   </button>
                 )}
               </div>
-              <AnimatePresence>
-                {visibleTranslations.includes(idx) && line.pl && (
-                  <motion.p
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    style={{ 
-                      fontSize: '0.9rem', 
-                      color: 'var(--secondary)', 
-                      marginLeft: '2.8rem',
-                      fontStyle: 'italic',
-                      overflow: 'hidden'
-                    }}
-                  >
-                    {line.pl}
-                  </motion.p>
-                )}
-              </AnimatePresence>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
 
-      <button className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={handleFinish}>
-        Dalej <ArrowRight size={20} />
+      <button
+        className="btn btn-primary btn-block"
+        onClick={() => {
+          stop();
+          markSubLessonDone(lessonId, 'dialog');
+          setIsFinished(true);
+        }}
+      >
+        Zakończ dialog <ArrowRight size={20} />
       </button>
-    </div>
+    </ExerciseShell>
   );
 };

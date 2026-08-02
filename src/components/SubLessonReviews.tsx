@@ -1,286 +1,145 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import type { Word } from '../types';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useTTS } from '../hooks/useTTS';
-import { CheckCircle2, XCircle, ArrowLeft, RotateCcw, PartyPopper, Ghost, Zap } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CyrillicKeyboard } from './CyrillicKeyboard';
-import { normalizeRussian } from '../utils/normalize';
-import { updateStreak } from '../utils/streak';
+import { useQuiz, type QuizItem } from '../hooks/useQuiz';
+import { ArrowLeft, PartyPopper, CalendarClock, Layers } from 'lucide-react';
+import { QuizCard } from './QuizCard';
+import { ExerciseShell } from './ExerciseShell';
+import { LessonResult } from './LessonResult';
+import { shuffle } from '../utils/shuffle';
+import { words as pluralWords } from '../utils/plural';
+import {
+  getAllCards,
+  getDueCards,
+  getUpcomingCount,
+  gradeCard,
+  todayKey,
+  describeInterval,
+} from '../utils/srs';
 
 interface ReviewsProps {
   onBack: () => void;
 }
 
 export const SubLessonReviews: React.FC<ReviewsProps> = ({ onBack }) => {
-  const [sessionQueue, setSessionQueue] = useState<Word[]>([]);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [userInput, setUserInput] = useState('');
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
-  const [isFinished, setIsFinished] = useState(false);
-  const [overachieverLevel, setOverachieverLevel] = useState(0);
+  // Kolejka budowana synchronicznie, żeby quiz od pierwszego renderu miał komplet pytań.
+  const [queue, setQueue] = useState(() => getDueCards());
+  const [extraRounds, setExtraRounds] = useState(0);
   const { speak } = useTTS();
 
-  useEffect(() => {
-    const historyStr = localStorage.getItem('kacapp_word_history');
-    const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
-    const lastDate = localStorage.getItem('kacapp_last_review_date');
-    const dailyPoolStr = localStorage.getItem('kacapp_daily_review_pool');
+  useEffect(() => () => window.speechSynthesis.cancel(), []);
 
-    const history: Word[] = historyStr ? JSON.parse(historyStr) : [];
-    const reviewsNew: Word[] = reviewsNewStr ? JSON.parse(reviewsNewStr) : [];
-    
-    const today = new Date().toLocaleDateString();
-    let dailyPool: Word[] = [];
+  const questions: QuizItem[] = useMemo(() => queue.map((c) => ({ id: c.ru, prompt: c.pl, answer: c.ru })), [queue]);
 
-    if (lastDate === today && dailyPoolStr) {
-      dailyPool = JSON.parse(dailyPoolStr);
-    } else {
-      const potentialRandom = history.filter(h => !reviewsNew.find(rn => rn.ru === h.ru));
-      dailyPool = [...potentialRandom].sort(() => Math.random() - 0.5).slice(0, 20);
-      localStorage.setItem('kacapp_last_review_date', today);
-      localStorage.setItem('kacapp_daily_review_pool', JSON.stringify(dailyPool));
-    }
-
-    const initialQueue = [...reviewsNew, ...dailyPool];
-    setSessionQueue(initialQueue);
-
-    return () => {
-      window.speechSynthesis.cancel();
-    };
+  // Harmonogram aktualizujemy od razu po odpowiedzi - wyjście w połowie nie gubi postępu.
+  const handleGraded = useCallback((item: QuizItem, isCorrect: boolean) => {
+    gradeCard(item.id, isCorrect);
   }, []);
 
-  const handleCheck = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (feedback === 'correct' || !userInput.trim()) return;
+  const quiz = useQuiz(questions, { onAnswerRevealed: speak, onGraded: handleGraded });
 
-    const currentWord = sessionQueue[currentIndex];
-    if (normalizeRussian(userInput) === normalizeRussian(currentWord.ru)) {
-      setFeedback('correct');
-      speak(currentWord.ru);
-    } else {
-      setFeedback('wrong');
-    }
-  };
-
-  const handleNext = () => {
-    const currentWord = sessionQueue[currentIndex];
-    const isCorrect = feedback === 'correct';
-
-    if (isCorrect) {
-      const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
-      if (reviewsNewStr) {
-        const reviewsNew: Word[] = JSON.parse(reviewsNewStr);
-        localStorage.setItem('kacapp_reviews_new', JSON.stringify(reviewsNew.filter(w => w.ru !== currentWord.ru)));
-      }
-
-      const dailyPoolStr = localStorage.getItem('kacapp_daily_review_pool');
-      if (dailyPoolStr) {
-        const dailyPool: Word[] = JSON.parse(dailyPoolStr);
-        localStorage.setItem('kacapp_daily_review_pool', JSON.stringify(dailyPool.filter(w => w.ru !== currentWord.ru)));
-      }
-    }
-
-    if (feedback === 'wrong') {
-      const updatedQueue = [...sessionQueue];
-      updatedQueue.push(currentWord);
-      setSessionQueue(updatedQueue);
-    }
-
-    setFeedback(null);
-    setUserInput('');
-    
-    if (currentIndex < sessionQueue.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      updateStreak();
-      setIsFinished(true);
-    }
-  };
+  const [queueVersion, setQueueVersion] = useState(0);
+  useEffect(() => {
+    if (queueVersion > 0) quiz.restart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queueVersion]);
 
   const addMoreWords = () => {
-    const historyStr = localStorage.getItem('kacapp_word_history');
-    const history: Word[] = historyStr ? JSON.parse(historyStr) : [];
-    if (history.length > 0) {
-      const moreWords = [...history].sort(() => Math.random() - 0.5).slice(0, 10);
-      setSessionQueue([...sessionQueue, ...moreWords]);
-      setIsFinished(false);
-      setOverachieverLevel(prev => prev + 1);
-    }
+    // Ponad plan: karty spoza dzisiejszego terminu. Poprawna odpowiedź tylko
+    // przesuwa termin dalej, więc harmonogram na tym nie cierpi.
+    const today = todayKey();
+    const notDue = getAllCards().filter((c) => c.due > today);
+    if (notDue.length === 0) return;
+    setQueue(shuffle(notDue).slice(0, 10));
+    setExtraRounds((v) => v + 1);
+    setQueueVersion((v) => v + 1);
   };
 
-  const progress = useMemo(() => {
-    if (sessionQueue.length === 0) return 0;
-    return (currentIndex / sessionQueue.length) * 100;
-  }, [currentIndex, sessionQueue.length]);
+  const upcoming = getUpcomingCount(1);
+  const totalCards = getAllCards().length;
 
-  if (sessionQueue.length === 0 && !isFinished) {
+  if (questions.length === 0) {
     return (
       <div className="container fade-in" style={{ textAlign: 'center', paddingTop: '4rem' }}>
-        <PartyPopper size={64} color="var(--accent)" style={{ margin: '0 auto 2rem' }} />
-        <h2 style={{ marginBottom: '1rem' }}>Cel osiągnięty!</h2>
-        <p style={{ color: 'var(--secondary)', marginBottom: '2rem' }}>Wszystkie powtórki na dziś zaliczone.</p>
-        <div className="flex" style={{ flexDirection: 'column', gap: '1rem' }}>
-          <button className="btn btn-primary" onClick={addMoreWords}>Chcę więcej!</button>
-          <button className="btn btn-secondary" onClick={onBack}>Wróć do menu</button>
-        </div>
-      </div>
-    );
-  }
-
-  if (isFinished) {
-    return (
-      <div className="container fade-in" style={{ textAlign: 'center', paddingTop: '4rem' }}>
-        <CheckCircle2 size={64} color="var(--success)" style={{ margin: '0 auto 2rem' }} />
-        <h2>Powtórka zakończona!</h2>
-        <p style={{ color: 'var(--secondary)', marginBottom: '3rem' }}>
-          {overachieverLevel > 0 
-            ? `Wow! Jesteś na poziomie overachievera: ${overachieverLevel}!` 
-            : 'Świetna robota. Zapraszamy jutro!'}
+        <PartyPopper size={64} color="var(--accent)" style={{ margin: '0 auto 1.5rem' }} />
+        <h2 style={{ marginBottom: '0.5rem' }}>Powtórki na dziś zrobione</h2>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
+          {totalCards === 0
+            ? 'Zrób lekcję słówek, a materiał sam trafi tutaj.'
+            : upcoming > 0
+              ? `Jutro wraca ${upcoming} ${pluralWords(upcoming)}.`
+              : 'Kolejne słówka wrócą w swoim czasie - system rozkłada je w dniach.'}
         </p>
-        <div className="flex" style={{ flexDirection: 'column', gap: '1rem' }}>
-          <button className="btn btn-primary" onClick={addMoreWords}>Jeszcze więcej!</button>
-          <button className="btn btn-secondary" style={{ width: '100%' }} onClick={onBack}>Wróć do menu</button>
-        </div>
-      </div>
-    );
-  }
-
-  const current = sessionQueue[currentIndex];
-
-  const progressBarAnimation = overachieverLevel > 0 ? {
-    rotate: [0, -2, 2, -2, 2, 0],
-    x: [0, -5, 5, -5, 5, 0],
-    y: overachieverLevel > 2 ? [0, -2, 2, -2, 2, 0] : 0,
-    scale: [1, 1.05, 0.95, 1.05, 1],
-    transition: { 
-      duration: Math.max(0.1, 0.5 - overachieverLevel * 0.05), 
-      repeat: Infinity 
-    }
-  } : {};
-
-  const cardAnimation = overachieverLevel > 4 ? {
-    rotate: overachieverLevel > 6 ? [0, -1, 1, -1, 1, 0] : 0,
-    y: overachieverLevel > 8 ? [0, -2, 2, -2, 2, 0] : 0,
-    transition: { duration: 0.2, repeat: Infinity }
-  } : {};
-
-  return (
-    <div className="container fade-in">
-      <button 
-        className="btn btn-secondary" 
-        onClick={() => { window.speechSynthesis.cancel(); onBack(); }} 
-        style={{ marginBottom: '1rem' }}
-      >
-        <ArrowLeft size={20} /> Wróć
-      </button>
-
-      <motion.div 
-        className="progress-bar"
-        animate={progressBarAnimation}
-        style={{ 
-          height: overachieverLevel > 0 ? '16px' : '8px', 
-          background: overachieverLevel > 3 ? '#ff00ff20' : 'var(--background)',
-          marginTop: '1rem'
-        }}
-      >
-        <motion.div 
-          className="progress-fill" 
-          initial={{ width: 0 }}
-          animate={{ width: `${progress}%` }}
-          style={{ 
-            background: overachieverLevel > 0 ? `linear-gradient(90deg, #2563eb, #ff00ff, #00ffff)` : 'var(--accent)',
-            backgroundSize: '200% 100%',
-            boxShadow: overachieverLevel > 2 ? '0 0 20px #ff00ff' : 'none'
-          }}
-        />
-      </motion.div>
-
-      <motion.div 
-        className="card" 
-        animate={cardAnimation}
-        style={{ textAlign: 'center', paddingBottom: '3rem', position: 'relative', overflow: 'hidden' }}
-      >
-        {overachieverLevel > 5 && (
-          <motion.div 
-            style={{ position: 'absolute', top: 10, right: 10 }}
-            animate={{ scale: [1, 1.5, 1], rotate: 360 }}
-            transition={{ duration: 2, repeat: Infinity }}
-          >
-            <Zap color="#ffff00" fill="#ffff00" />
-          </motion.div>
-        )}
-        
-        <div className="flex" style={{ justifyContent: 'center', color: overachieverLevel > 0 ? '#ff00ff' : 'var(--accent)', marginBottom: '1rem' }}>
-          {overachieverLevel > 0 ? <Ghost size={20} /> : <RotateCcw size={20} />}
-          <strong>
-            {overachieverLevel > 0 ? `TRYB DZIADA LVL ${overachieverLevel}` : 'Powtórka'} ({currentIndex + 1} / {sessionQueue.length})
-          </strong>
-        </div>
-        
-        <h2 style={{ fontSize: '2.5rem', margin: '1rem 0' }}>{current.pl}</h2>
-        
-        <form onSubmit={handleCheck}>
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <input 
-              type="text" 
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              placeholder="Wpisz po rosyjsku..."
-              autoFocus
-              disabled={feedback === 'correct'}
-              style={{ 
-                textAlign: 'center', 
-                fontSize: '1.25rem',
-                borderColor: overachieverLevel > 4 ? '#ff00ff' : undefined
-              }}
-            />
-            <CyrillicKeyboard 
-              onInput={(char) => !feedback && setUserInput(prev => prev + char)} 
-              onBackspace={() => !feedback && setUserInput(prev => prev.slice(0, -1))}
-            />
-          </div>
-          
-          <AnimatePresence>
-            {feedback && (
-              <motion.div 
-                initial={{ opacity: 0, scale: 0.9 }} 
-                animate={{ opacity: 1, scale: 1 }} 
-                style={{ marginTop: '1rem' }}
-              >
-                {feedback === 'correct' ? (
-                  <div style={{ color: 'var(--success)', fontWeight: 700 }}>
-                    <CheckCircle2 size={20} /> Poprawnie!
-                  </div>
-                ) : (
-                  <div style={{ color: 'var(--error)' }}>
-                    <XCircle size={20} /> Prawie... powinno być: <strong>{current.ru}</strong>
-                    <p style={{ fontSize: '0.875rem', marginTop: '0.5rem' }}>Słówko wróci na koniec kolejki.</p>
-                  </div>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {!feedback ? (
-            <button className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} type="submit">
-              Sprawdź
-            </button>
-          ) : (
-            <button 
-              className="btn btn-primary" 
-              style={{ 
-                width: '100%', 
-                marginTop: '1.5rem',
-                background: feedback === 'wrong' ? 'var(--error)' : 'var(--primary)'
-              }} 
-              onClick={handleNext} 
-              type="button"
-            >
-              Dalej
+        <div className="grid">
+          {totalCards > 0 && (
+            <button className="btn btn-primary btn-block" onClick={addMoreWords}>
+              Poćwicz ponad plan
             </button>
           )}
-        </form>
-      </motion.div>
-    </div>
+          <button className="btn btn-secondary btn-block" onClick={onBack}>
+            <ArrowLeft size={20} /> Wróć do menu
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (quiz.finished) {
+    return (
+      <LessonResult
+        title={extraRounds > 0 ? 'Powtórka ponad plan' : 'Powtórka dzienna'}
+        stats={quiz.stats}
+        onRetry={addMoreWords}
+        retryLabel="Poćwicz ponad plan"
+        onBack={onBack}
+        backLabel="Wróć do menu"
+        footnote={upcoming > 0 ? `Jutro wraca ${upcoming} ${pluralWords(upcoming)}.` : undefined}
+      />
+    );
+  }
+
+  const currentCard = quiz.current ? queue.find((c) => c.ru === quiz.current!.id) : undefined;
+
+  return (
+    <ExerciseShell
+      title={extraRounds > 0 ? 'Powtórka ponad plan' : 'Powtórka dzienna'}
+      subtitle="Słówka wracają w rosnących odstępach - im lepiej je znasz, tym rzadziej."
+      onBack={onBack}
+      progress={quiz.progress}
+      progressLabel={`Zaliczone ${quiz.stats.mastered} / ${quiz.stats.total}`}
+      headerRight={
+        <span className="badge">
+          <Layers size={14} /> {questions.length} na dziś
+        </span>
+      }
+    >
+      {quiz.current && (
+        <QuizCard
+          context={
+            currentCard
+              ? `Poziom ${currentCard.box} · dobrze = wraca ${describeInterval(currentCard.box + 1)}`
+              : undefined
+          }
+          prompt={quiz.current.prompt}
+          answer={quiz.current.answer}
+          input={quiz.input}
+          onInputChange={quiz.setInput}
+          feedback={quiz.feedback}
+          onCheck={quiz.check}
+          onGiveUp={quiz.giveUp}
+          onNext={quiz.next}
+          onSpeak={() => speak(quiz.current!.answer)}
+          isLast={quiz.position >= quiz.queueLength}
+        />
+      )}
+
+      {upcoming > 0 && (
+        <p
+          className="flex"
+          style={{ justifyContent: 'center', gap: '0.4rem', color: 'var(--text-muted)', fontSize: '0.8rem' }}
+        >
+          <CalendarClock size={14} /> Jutro wraca {upcoming} {pluralWords(upcoming)}
+        </p>
+      )}
+    </ExerciseShell>
   );
 };

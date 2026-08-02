@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { Word } from '../types';
 import { useTTS } from '../hooks/useTTS';
-import { CheckCircle2, XCircle, ArrowRight, Volume2, ArrowLeft } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CyrillicKeyboard } from './CyrillicKeyboard';
+import { useQuiz } from '../hooks/useQuiz';
+import { ArrowRight, Volume2 } from 'lucide-react';
 import { LessonResult } from './LessonResult';
-import { normalizeRussian } from '../utils/normalize';
+import { ExerciseShell } from './ExerciseShell';
+import { QuizCard } from './QuizCard';
+import { EmptyState } from './EmptyState';
+import { WordImage } from './WordImage';
+import { markSubLessonDone, registerLearnedWords } from '../utils/progress';
 
 interface VocabProps {
   words: Word[];
@@ -15,224 +18,106 @@ interface VocabProps {
 }
 
 export const SubLessonVocab: React.FC<VocabProps> = ({ words, lessonId, type, onComplete }) => {
-  const [phase, setPhase] = useState<'learning' | 'testing' | 'finished'>('learning');
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [userInput, setUserInput] = useState('');
-  const [testWords, setTestWords] = useState<Word[]>([]);
-  const [wrongWords, setWrongWords] = useState<Word[]>([]);
-  const [sessionCorrectWordsRu, setSessionCorrectWordsRu] = useState<string[]>([]);
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
+  const title = type === 'hard_vocab' ? 'Słówka (trudne)' : 'Lekcja słówek';
+  const [phase, setPhase] = useState<'learning' | 'testing'>('learning');
+  const [learnIndex, setLearnIndex] = useState(0);
   const { speak } = useTTS();
 
-  useEffect(() => {
-    if (phase === 'learning') {
-      speak(words[currentIndex].ru);
-    }
-  }, [currentIndex, phase, words, speak]);
+  const questions = useMemo(
+    () => words.map((w) => ({ id: w.ru, prompt: w.pl, answer: w.ru })),
+    [words]
+  );
+  const quiz = useQuiz(questions, { onAnswerRevealed: speak });
 
   useEffect(() => {
-    return () => {
-      window.speechSynthesis.cancel();
-    };
-  }, []);
+    if (phase === 'learning' && words[learnIndex]) speak(words[learnIndex].ru);
+  }, [learnIndex, phase, words, speak]);
 
-  const handleNextLearning = () => {
-    if (currentIndex < words.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      setPhase('testing');
-      setCurrentIndex(0);
-      setTestWords([...words]);
+  useEffect(() => () => window.speechSynthesis.cancel(), []);
+
+  useEffect(() => {
+    if (quiz.finished) {
+      markSubLessonDone(lessonId, type);
+      registerLearnedWords(words);
     }
-  };
+  }, [quiz.finished, lessonId, type, words]);
 
-  const handleCheck = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (feedback || !userInput.trim()) return;
-
-    const currentWord = testWords[currentIndex];
-    if (normalizeRussian(userInput) === normalizeRussian(currentWord.ru)) {
-      setFeedback('correct');
-      speak(currentWord.ru);
-      
-      if (!sessionCorrectWordsRu.includes(currentWord.ru)) {
-        setSessionCorrectWordsRu(prev => [...prev, currentWord.ru]);
-      }
-    } else {
-      setFeedback('wrong');
-      if (!wrongWords.find(w => w.ru === currentWord.ru)) {
-        setWrongWords([...wrongWords, currentWord]);
-      }
-    }
-  };
-
-  const saveProgress = () => {
-    const progress = localStorage.getItem('kacapp_sub_progress');
-    const allProgress = progress ? JSON.parse(progress) : {};
-    const lessonProgress = allProgress[lessonId] || [];
-    if (!lessonProgress.includes(type)) {
-      lessonProgress.push(type);
-      allProgress[lessonId] = lessonProgress;
-      localStorage.setItem('kacapp_sub_progress', JSON.stringify(allProgress));
-    }
-
-    const history = localStorage.getItem('kacapp_word_history');
-    const wordHistory: Word[] = history ? JSON.parse(history) : [];
-    
-    const reviewsNewStr = localStorage.getItem('kacapp_reviews_new');
-    const reviewsNew: Word[] = reviewsNewStr ? JSON.parse(reviewsNewStr) : [];
-
-    words.forEach(word => {
-      const isKnown = wordHistory.find(w => w.ru === word.ru);
-      const isAlreadyInNew = reviewsNew.find(w => w.ru === word.ru);
-      
-      if (!isKnown && !isAlreadyInNew) {
-        reviewsNew.push(word);
-      }
-      
-      if (!isKnown) {
-        wordHistory.push(word);
-      }
-    });
-    
-    localStorage.setItem('kacapp_word_history', JSON.stringify(wordHistory));
-    localStorage.setItem('kacapp_reviews_new', JSON.stringify(reviewsNew));
-  };
-
-  const handleNextTesting = () => {
-    const currentWord = testWords[currentIndex];
-    
-    if (feedback === 'wrong') {
-       setTestWords(prev => [...prev, currentWord]);
-    }
-    
-    setFeedback(null);
-    setUserInput('');
-    
-    if (currentIndex < testWords.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      saveProgress();
-      setPhase('finished');
-    }
-  };
-
-  if (phase === 'finished') {
-    return <LessonResult title="Lekcja słówek" onBack={onComplete} />;
+  if (words.length === 0) {
+    return (
+      <EmptyState
+        title="Brak słówek"
+        description="Ta lekcja nie ma jeszcze materiału w tej sekcji."
+        onBack={onComplete}
+      />
+    );
   }
 
-  const word = words[currentIndex];
-  const progress = (sessionCorrectWordsRu.length / words.length) * 100;
+  if (quiz.finished) {
+    return (
+      <LessonResult
+        title={title}
+        stats={quiz.stats}
+        onRetry={() => {
+          quiz.restart();
+          setPhase('learning');
+          setLearnIndex(0);
+        }}
+        onBack={onComplete}
+      />
+    );
+  }
+
+  if (phase === 'learning') {
+    const word = words[learnIndex];
+    return (
+      <ExerciseShell
+        title={title}
+        subtitle="Najpierw poznaj słówka, potem sprawdzimy pamięć."
+        onBack={onComplete}
+        progress={((learnIndex + 1) / words.length) * 100}
+        progressLabel={`Nauka ${learnIndex + 1} / ${words.length}`}
+      >
+        <div className="card" style={{ textAlign: 'center' }}>
+          <WordImage word={word} />
+          <h1 style={{ fontSize: '2.25rem', marginBottom: '0.25rem' }}>{word.ru}</h1>
+          <p style={{ fontSize: '1.15rem', color: 'var(--text-muted)', marginBottom: '1.25rem' }}>{word.pl}</p>
+          <button className="btn btn-secondary btn-icon" onClick={() => speak(word.ru)} aria-label="Przeczytaj">
+            <Volume2 />
+          </button>
+        </div>
+
+        <button
+          className="btn btn-primary btn-block"
+          onClick={() => (learnIndex < words.length - 1 ? setLearnIndex(learnIndex + 1) : setPhase('testing'))}
+        >
+          {learnIndex < words.length - 1 ? 'Dalej' : 'Zacznij test'} <ArrowRight size={20} />
+        </button>
+      </ExerciseShell>
+    );
+  }
 
   return (
-    <div className="container fade-in">
-      <button className="btn btn-secondary" onClick={() => { window.speechSynthesis.cancel(); onComplete(); }} style={{ marginBottom: '1rem' }}>
-        <ArrowLeft size={20} /> Wróć
-      </button>
-
-      {phase === 'learning' ? (
-        <>
-          <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${((currentIndex + 1) / words.length) * 100}%` }}></div>
-          </div>
-          
-          <div className="card" style={{ textAlign: 'center' }}>
-            <span style={{ color: 'var(--secondary)', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700 }}>
-              Nauka słówek ({currentIndex + 1} / {words.length})
-            </span>
-            {word.image && (
-              <img 
-                src={word.image} 
-                alt={word.pl} 
-                style={{ width: '100%', height: '200px', objectFit: 'cover', borderRadius: '0.5rem', margin: '1rem 0' }} 
-              />
-            )}
-            <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>{word.ru}</h1>
-            <p style={{ fontSize: '1.25rem', color: 'var(--secondary)', marginBottom: '1.5rem' }}>{word.pl}</p>
-            
-            <button className="btn btn-primary" style={{ borderRadius: '50%', width: '50px', height: '50px', padding: 0 }} onClick={() => speak(word.ru)}>
-              <Volume2 />
-            </button>
-          </div>
-
-          <button className="btn btn-primary" style={{ width: '100%' }} onClick={handleNextLearning}>
-            Dalej <ArrowRight size={20} />
-          </button>
-        </>
-      ) : (
-        <>
-          <div className="progress-bar">
-            <div className="progress-fill" style={{ width: `${progress}%` }}></div>
-          </div>
-
-          <div className="card" style={{ textAlign: 'center', paddingBottom: '3rem' }}>
-            <span style={{ color: 'var(--secondary)', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700 }}>
-              Wpisz po rosyjsku (Opanowane: {sessionCorrectWordsRu.length}/{words.length})
-            </span>
-            <h2 style={{ fontSize: '2rem', margin: '1rem 0' }}>{testWords[currentIndex].pl}</h2>
-            
-            <form onSubmit={handleCheck}>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <input 
-                  type="text" 
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  placeholder="Wpisz słówko..."
-                  autoFocus
-                  disabled={feedback === 'correct'}
-                  style={{ textAlign: 'center', fontSize: '1.25rem' }}
-                />
-                <CyrillicKeyboard 
-                  onInput={(char) => !feedback && setUserInput(prev => prev + char)} 
-                  onBackspace={() => !feedback && setUserInput(prev => prev.slice(0, -1))}
-                />
-              </div>
-              
-              <AnimatePresence>
-                {feedback && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    style={{ marginTop: '1rem' }}
-                  >
-                    {feedback === 'correct' ? (
-                      <div style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                        <CheckCircle2 /> Poprawnie!
-                      </div>
-                    ) : (
-                      <div style={{ color: 'var(--error)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                          <XCircle /> Prawie...
-                        </div>
-                        <p>Powinno być: <strong>{testWords[currentIndex].ru}</strong></p>
-                      </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              {!feedback ? (
-                <button className="btn btn-primary" style={{ width: '100%', marginTop: '1.5rem' }} type="submit">
-                  Sprawdź
-                </button>
-              ) : (
-                <button 
-                  className="btn btn-primary" 
-                  style={{ 
-                    width: '100%', 
-                    marginTop: '1.5rem',
-                    background: feedback === 'wrong' ? 'var(--error)' : 'var(--primary)'
-                  }} 
-                  onClick={handleNextTesting} 
-                  type="button"
-                >
-                  Dalej
-                </button>
-              )}
-            </form>
-          </div>
-        </>
+    <ExerciseShell
+      title={title}
+      subtitle="Wpisz słówko po rosyjsku."
+      onBack={onComplete}
+      progress={quiz.progress}
+      progressLabel={`Opanowane ${quiz.stats.mastered} / ${quiz.stats.total}`}
+    >
+      {quiz.current && (
+        <QuizCard
+          prompt={quiz.current.prompt}
+          answer={quiz.current.answer}
+          input={quiz.input}
+          onInputChange={quiz.setInput}
+          feedback={quiz.feedback}
+          onCheck={quiz.check}
+          onGiveUp={quiz.giveUp}
+          onNext={quiz.next}
+          onSpeak={() => speak(quiz.current!.answer)}
+          isLast={quiz.position >= quiz.queueLength}
+        />
       )}
-    </div>
+    </ExerciseShell>
   );
 };

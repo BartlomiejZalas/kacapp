@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useTTS } from '../hooks/useTTS';
-import { CheckCircle2, XCircle, ArrowLeft } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CyrillicKeyboard } from './CyrillicKeyboard';
+import { useQuiz } from '../hooks/useQuiz';
 import { LessonResult } from './LessonResult';
-import { normalizeRussian } from '../utils/normalize';
+import { ExerciseShell } from './ExerciseShell';
+import { QuizCard } from './QuizCard';
+import { EmptyState } from './EmptyState';
+import { markSubLessonDone } from '../utils/progress';
 
 interface SentencesProps {
   sentences: { pl: string; ru: string }[];
@@ -12,157 +13,57 @@ interface SentencesProps {
   onComplete: () => void;
 }
 
-export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences: initialSentences, lessonId, onComplete }) => {
-  const [sessionSentences, setSessionSentences] = useState(initialSentences);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [userInput, setUserInput] = useState('');
-  const [feedback, setFeedback] = useState<'correct' | 'wrong' | null>(null);
-  const [isFinished, setIsFinished] = useState(false);
+export const SubLessonSentences: React.FC<SentencesProps> = ({ sentences, lessonId, onComplete }) => {
   const { speak } = useTTS();
+  const questions = useMemo(
+    () => sentences.map((s) => ({ id: s.ru, prompt: s.pl, answer: s.ru })),
+    [sentences]
+  );
+  const quiz = useQuiz(questions, { onAnswerRevealed: speak });
+
+  useEffect(() => () => window.speechSynthesis.cancel(), []);
 
   useEffect(() => {
-    return () => {
-      window.speechSynthesis.cancel();
-    };
-  }, []);
+    if (quiz.finished) markSubLessonDone(lessonId, 'sentences');
+  }, [quiz.finished, lessonId]);
 
-  const saveProgress = () => {
-    const progress = localStorage.getItem('kacapp_sub_progress');
-    const allProgress = progress ? JSON.parse(progress) : {};
-    const lessonProgress = allProgress[lessonId] || [];
-    if (!lessonProgress.includes('sentences')) {
-      lessonProgress.push('sentences');
-      allProgress[lessonId] = lessonProgress;
-      localStorage.setItem('kacapp_sub_progress', JSON.stringify(allProgress));
-    }
-  };
-
-  const handleCheck = (e?: React.FormEvent) => {
-    e?.preventDefault();
-    if (feedback === 'correct' || !userInput.trim()) return;
-
-    const current = sessionSentences[currentIndex];
-    if (normalizeRussian(userInput) === normalizeRussian(current.ru)) {
-      setFeedback('correct');
-      speak(current.ru);
-    } else {
-      setFeedback('wrong');
-    }
-  };
-
-  const handleNext = () => {
-    const current = sessionSentences[currentIndex];
-    
-    if (feedback === 'wrong') {
-      setSessionSentences(prev => [...prev, current]);
-    }
-
-    setFeedback(null);
-    setUserInput('');
-    if (currentIndex < sessionSentences.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else {
-      saveProgress();
-      setIsFinished(true);
-    }
-  };
-
-  if (isFinished) {
-    return <LessonResult title="Lekcja zdania" onBack={onComplete} />;
+  if (sentences.length === 0) {
+    return (
+      <EmptyState
+        title="Brak zdań"
+        description="Ta lekcja nie ma jeszcze materiału w tej sekcji."
+        onBack={onComplete}
+      />
+    );
   }
 
-  const current = sessionSentences[currentIndex];
+  if (quiz.finished) {
+    return <LessonResult title="Zdania" stats={quiz.stats} onRetry={quiz.restart} onBack={onComplete} />;
+  }
 
   return (
-    <div className="container fade-in">
-       <button 
-        className="btn btn-secondary" 
-        onClick={() => { window.speechSynthesis.cancel(); onComplete(); }} 
-        style={{ marginBottom: '1rem' }}
-      >
-        <ArrowLeft size={20} /> Wróć
-      </button>
-
-       <div className="progress-bar">
-          <div className="progress-fill" style={{ width: `${((currentIndex + 1) / sessionSentences.length) * 100}%` }}></div>
-        </div>
-
-        <div className="card" style={{ textAlign: 'center', paddingBottom: '3rem' }}>
-          <span style={{ color: 'var(--secondary)', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 700 }}>
-            Napisz zdanie ({currentIndex + 1} / {sessionSentences.length})
-          </span>
-          <h2 style={{ fontSize: '1.5rem', margin: '1.5rem 0' }}>{current.pl}</h2>
-          
-          <form onSubmit={handleCheck}>
-            <div style={{ position: 'relative' }}>
-              <textarea 
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                placeholder="Wpisz po rosyjsku..."
-                autoFocus
-                disabled={feedback === 'correct'}
-                rows={3}
-                style={{ 
-                  width: '100%', 
-                  padding: '1rem', 
-                  borderRadius: '0.5rem', 
-                  fontSize: '1.1rem', 
-                  border: '2px solid #e2e8f0',
-                  outline: 'none',
-                  fontFamily: 'inherit',
-                  marginBottom: '1rem'
-                }}
-              />
-              <div style={{ position: 'absolute', bottom: '2rem', right: '0.5rem' }}>
-                <CyrillicKeyboard 
-                  onInput={(char) => !feedback && setUserInput(prev => prev + char)} 
-                  onBackspace={() => !feedback && setUserInput(prev => prev.slice(0, -1))}
-                />
-              </div>
-            </div>
-            
-            <AnimatePresence>
-              {feedback && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{ marginBottom: '1rem' }}
-                >
-                  {feedback === 'correct' ? (
-                    <div style={{ color: 'var(--success)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                      <CheckCircle2 /> Poprawnie!
-                    </div>
-                  ) : (
-                    <div style={{ color: 'var(--error)' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                        <XCircle /> Prawie...
-                      </div>
-                      <p>Powinno być: <strong>{current.ru}</strong></p>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-
-            {!feedback ? (
-              <button className="btn btn-primary" style={{ width: '100%' }} type="submit">
-                Sprawdź
-              </button>
-            ) : (
-              <button 
-                className="btn btn-primary" 
-                style={{ 
-                  width: '100%',
-                  background: feedback === 'wrong' ? 'var(--error)' : 'var(--primary)'
-                }} 
-                onClick={handleNext} 
-                type="button"
-              >
-                Dalej
-              </button>
-            )}
-          </form>
-        </div>
-    </div>
+    <ExerciseShell
+      title="Zdania"
+      subtitle="Przetłumacz całe zdanie na rosyjski."
+      onBack={onComplete}
+      progress={quiz.progress}
+      progressLabel={`Opanowane ${quiz.stats.mastered} / ${quiz.stats.total}`}
+    >
+      {quiz.current && (
+        <QuizCard
+          prompt={quiz.current.prompt}
+          answer={quiz.current.answer}
+          input={quiz.input}
+          onInputChange={quiz.setInput}
+          feedback={quiz.feedback}
+          onCheck={quiz.check}
+          onGiveUp={quiz.giveUp}
+          onNext={quiz.next}
+          onSpeak={() => speak(quiz.current!.answer)}
+          multiline
+          isLast={quiz.position >= quiz.queueLength}
+        />
+      )}
+    </ExerciseShell>
   );
 };

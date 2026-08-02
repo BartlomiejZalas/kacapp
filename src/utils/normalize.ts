@@ -1,8 +1,11 @@
-export const normalizeRussian = (text: string): string => {
-  return text
+// Interpunkcja, myślniki (także — i –), cudzysłowy oraz spacje nie decydują o tym,
+// czy ktoś zna słowo - porównujemy same litery.
+const PUNCTUATION = /[.,/#!$%^&*;:{}=\-_`~()?!"'«»„”“–—…]/g;
+
+export const normalizeRussian = (text: string): string =>
+  text
     .toLowerCase()
     .trim()
-    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // Remove punctuation
-    .replace(/\s+/g, "") // Remove all whitespace
-    .replace(/ё/g, "е"); // Treat ё as е for simpler matching
-};
+    .replace(PUNCTUATION, '')
+    .replace(/\s+/g, '')
+    .replace(/ё/g, 'е'); // ё i е traktujemy wymiennie

@@ -43,3 +43,35 @@ export interface Category {
   lessons: Lesson[];
 }
 
+/* --- Gramatyka: inny format niż lekcje słownikowe --- */
+
+export interface GrammarRule {
+  title: string;
+  /** Wyjaśnienie zasady, zwykłym językiem. */
+  body: string;
+  /** Najważniejsze zdanie do zapamiętania. */
+  keyPoint?: string;
+  examples?: { ru: string; pl: string; note?: string }[];
+  table?: { headers: string[]; rows: string[][] };
+}
+
+export interface GrammarQuestion {
+  /** Zdanie z luką, np. „Сейчас я ___ в магазин.” */
+  prompt: string;
+  /** Tłumaczenie, żeby było wiadomo, o którą formę chodzi. */
+  translation: string;
+  options: string[];
+  correctIndex: number;
+  /** Dlaczego ta odpowiedź - pokazywane po wyborze. */
+  explanation: string;
+}
+
+export interface GrammarLesson {
+  id: string;
+  name: string;
+  icon: string;
+  summary: string;
+  rules: GrammarRule[];
+  questions: GrammarQuestion[];
+}
+
