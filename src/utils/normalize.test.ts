@@ -33,6 +33,12 @@ test('wielkość liter, spacje i ё/е nie mają znaczenia', () => {
   accepts('ребенок', 'ребёнок');
 });
 
+test('akcent (kreska nad samogłoską) nie blokuje odpowiedzi', () => {
+  accepts('волосы', 'во\u0301лосы');
+  accepts('во\u0301лосы', 'волосы');
+  accepts('хорошо', 'хорошо\u0301');
+});
+
 test('błędne słowo nadal jest błędne', () => {
   rejects('чай', 'кофе');
   rejects('дом', 'дома');

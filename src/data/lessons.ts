@@ -302,7 +302,7 @@ export const categories: Category[] = [
 - А это твои брат и сестра?|A to twój brat i siostra?
 - Да, это мой старший брат и младшая сестра.|Tak, to mój starszy brat i młodsza siostra.
 - Где они живут?|Gdzie oni mieszkają?
-- Брат живёт в Москве, а сестра учится в Питере.|Brat mieszka в Москве, а siostra uczy się w Pitrze (Petersburgu).
+- Брат живёт в Москве, а сестра учится в Питере.|Brat mieszka w Moskwie, a siostra uczy się w Pitrze (Petersburgu).
 - У тебя есть дети?|Masz dzieci?
 - Да, у меня есть сын и дочь.|Tak, mam syna i córkę.
 - Как их зовут?|Jak oni się nazywają?
@@ -679,7 +679,7 @@ export const categories: Category[] = [
 - Она уже старая!|Ona już jest stara!
 - И вовсе она не старая.|Wcale nie jest stara.
 - А я говорю - старая!|Mówię ci, że jest!
-- Она совсем не изменилась.|Ona w ogóle się не zmieniła.
+- Она совсем не изменилась.|Ona w ogóle się nie zmieniła.
 - Откуда ты знаешь?|Skąd wiesz?
 - Она стоит за тобой и ждёт, когда ты с ней поздороваешься. Привет Агатка! Рада тебя видеть!|Ona stoi za tobą i czeka, aż się z nią przywitasz. Cześć Agatka! Cieszę się, że cię widzę!
 - Лена! Как я по тебе соскучилась! А это твоя дочка?|Lena! Ależ stęskniłam się za tobą! A to twoja córka?

@@ -26,9 +26,6 @@ export interface QuizStats {
 
 export type Feedback = 'correct' | 'wrong' | null;
 
-/** Po tylu nieudanych podejściach słówko przestaje wracać do kolejki (żeby nie dało się utknąć). */
-const MAX_ATTEMPTS = 3;
-
 interface QuizOptions {
   /** Wywoływane z poprawną odpowiedzią po każdym sprawdzeniu - wszystkie ćwiczenia czytają rozwiązanie. */
   onAnswerRevealed?: (answer: string) => void;
@@ -44,7 +41,6 @@ interface QuizOptions {
 interface QuizState {
   queue: QuizItem[];
   index: number;
-  attempts: Record<string, number>;
   masteredIds: string[];
   mistakes: QuizItem[];
   answers: number;
@@ -58,7 +54,6 @@ export const useQuiz = (items: QuizItem[], options: QuizOptions = {}) => {
   const [state, setState] = useState<QuizState>(() => ({
     queue: items,
     index: 0,
-    attempts: {},
     masteredIds: [],
     mistakes: [],
     answers: 0,
@@ -77,11 +72,9 @@ export const useQuiz = (items: QuizItem[], options: QuizOptions = {}) => {
       onGraded?.(current, isCorrect);
       setFeedback(isCorrect ? 'correct' : 'wrong');
       setState((prev) => {
-        const attempts = { ...prev.attempts, [current.id]: (prev.attempts[current.id] || 0) + 1 };
         if (isCorrect) {
           return {
             ...prev,
-            attempts,
             answers: prev.answers + 1,
             correct: prev.correct + 1,
             masteredIds: prev.masteredIds.includes(current.id)
@@ -89,13 +82,12 @@ export const useQuiz = (items: QuizItem[], options: QuizOptions = {}) => {
               : [...prev.masteredIds, current.id],
           };
         }
-        // Pomyłka: pytanie wraca na koniec kolejki (o ile nie wyczerpano prób).
-        const canRetry = requeueOnWrong && attempts[current.id] < MAX_ATTEMPTS;
+        // Pomyłka: pytanie wraca na koniec kolejki i będzie wracać aż do skutku -
+        // ćwiczenie kończy się dopiero, gdy wszystko zostanie wpisane poprawnie.
         return {
           ...prev,
-          attempts,
           answers: prev.answers + 1,
-          queue: canRetry ? [...prev.queue, current] : prev.queue,
+          queue: requeueOnWrong ? [...prev.queue, current] : prev.queue,
           mistakes: prev.mistakes.some((m) => m.id === current.id)
             ? prev.mistakes
             : [...prev.mistakes, current],
@@ -156,8 +148,7 @@ export const useQuiz = (items: QuizItem[], options: QuizOptions = {}) => {
     setState({
       queue: items,
       index: 0,
-      attempts: {},
-      masteredIds: [],
+        masteredIds: [],
       mistakes: [],
       answers: 0,
       correct: 0,
