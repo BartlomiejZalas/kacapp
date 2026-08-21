@@ -981,6 +981,119 @@ export const categories: Category[] = [
           { pl: 'gorąco', ru: 'жарко' },
         ],
       },
+      {
+        id: '9',
+        name: 'Na randce',
+        icon: 'Heart',
+        dialog: `- Привет! Ты сегодня прекрасно выглядишь.|Cześć! Świetnie dziś wyglądasz.
+- Спасибо, ты тоже. Давно ждёшь?|Dzięki, ty też. Długo czekasz?
+- Нет, только пришёл. Пойдём в кафе?|Nie, dopiero przyszedłem. Pójdziemy do kawiarni?
+- Пойдём. Я знаю уютное место недалеко.|Chodźmy. Znam przytulne miejsce niedaleko.
+- Что ты будешь пить?|Co będziesz pić?
+- Кофе, пожалуйста. А ты?|Poproszę kawę. A ty?
+- Я возьму чай и десерт.|Ja wezmę herbatę i deser.
+- Расскажи, чем ты занимаешься в свободное время.|Opowiedz, co robisz w wolnym czasie.
+- Я люблю музыку и хожу в кино.|Lubię muzykę i chodzę do kina.
+- Здорово! Мне тоже нравится кино.|Super! Mnie też podoba się kino.
+- Может, сходим вместе в субботу?|Może pójdziemy razem w sobotę?
+- С удовольствием. Ты мне очень нравишься.|Z przyjemnością. Bardzo mi się podobasz.
+- Ты мне тоже. Можно тебя проводить?|Ty mnie też. Mogę cię odprowadzić?
+- Конечно. Я хорошо провела вечер.|Jasne. Miło spędziłam wieczór.
+- Я позвоню тебе завтра.|Zadzwonię do ciebie jutro.
+- Буду ждать. Спокойной ночи!|Będę czekać. Dobranoc!`,
+        words: [
+          { pl: 'randka', ru: 'свидание' },
+          { pl: 'miłość', ru: 'любовь' },
+          { pl: 'kawiarnia', ru: 'кафе' },
+          { pl: 'kwiaty', ru: 'цветы' },
+          { pl: 'prezent', ru: 'подарок' },
+          { pl: 'kino', ru: 'кино' },
+          { pl: 'spacer', ru: 'прогулка' },
+          { pl: 'deser', ru: 'десерт' },
+          { pl: 'wieczór', ru: 'вечер' },
+          { pl: 'uśmiech', ru: 'улыбка' },
+        ],
+        conjugations: [
+          {
+            title: 'Czasownik "нравиться" (podobać się)',
+            rows: [
+              { pronoun: 'я', verb: 'нравлюсь' },
+              { pronoun: 'ты', verb: 'нравишься' },
+              { pronoun: 'он/она', verb: 'нравится' },
+              { pronoun: 'мы', verb: 'нравимся' },
+              { pronoun: 'вы', verb: 'нравитесь' },
+              { pronoun: 'они', verb: 'нравятся' },
+            ],
+          },
+          {
+            title: 'Czasownik "любить" (kochać, lubić)',
+            rows: [
+              { pronoun: 'я', verb: 'люблю' },
+              { pronoun: 'ты', verb: 'любишь' },
+              { pronoun: 'он/она', verb: 'любит' },
+              { pronoun: 'мы', verb: 'любим' },
+              { pronoun: 'вы', verb: 'любите' },
+              { pronoun: 'они', verb: 'любят' },
+            ],
+          },
+        ],
+        unusualPhrases: [
+          {
+            pl: 'Podobasz mi się (dosł. "ty mnie podobasz się")',
+            ru: 'Ты мне нравишься',
+            explanation:
+              'Po rosyjsku to osoba, która się podoba, jest podmiotem, a ten, komu się podoba, stoi w celowniku: мне, тебе, ему. Dlatego czasownik zmienia się razem z osobą, która się podoba - "ты нравишься", ale "они нравятся".',
+            examples: [
+              { pl: 'Podobasz mi się.', ru: 'Ты мне нравишься' },
+              { pl: 'Podobam ci się?', ru: 'Я тебе нравлюсь' },
+              { pl: 'Podoba mi się to miejsce.', ru: 'Мне нравится это место' },
+            ],
+          },
+          {
+            pl: 'Umówić się (dosł. "zgodzić się")',
+            ru: 'Договориться о встрече',
+            explanation:
+              'Na spotkanie umawiamy się przez "договориться о" + miejscownik. Samo "свидание" to randka, ale "встреча" to każde spotkanie - i to drugie jest bezpieczniejsze, dopóki nie wiadomo, czy to randka.',
+            examples: [
+              { pl: 'Umówmy się na sobotę.', ru: 'Давай договоримся на субботу' },
+              { pl: 'O której się spotkamy?', ru: 'Во сколько мы встретимся' },
+              { pl: 'Zapraszam cię na randkę.', ru: 'Я приглашаю тебя на свидание' },
+            ],
+          },
+        ],
+        sentences: [
+          { pl: 'Świetnie dziś wyglądasz.', ru: 'Ты сегодня прекрасно выглядишь.' },
+          { pl: 'Bardzo mi się podobasz.', ru: 'Ты мне очень нравишься.' },
+          { pl: 'Może pójdziemy do kina?', ru: 'Может, сходим в кино?' },
+          { pl: 'Mogę cię odprowadzić?', ru: 'Можно тебя проводить?' },
+          { pl: 'Miło spędziłam wieczór.', ru: 'Я хорошо провела вечер.' },
+          { pl: 'Zadzwonię do ciebie jutro.', ru: 'Я позвоню тебе завтра.' },
+        ],
+        enumeratives: [
+          { pl: 'róże', ru: 'розы' },
+          { pl: 'czekolada', ru: 'шоколад' },
+          { pl: 'restauracja', ru: 'ресторан' },
+          { pl: 'teatr', ru: 'театр' },
+          { pl: 'park', ru: 'парк' },
+          { pl: 'nabrzeże', ru: 'набережная' },
+          { pl: 'wystawa', ru: 'выставка' },
+          { pl: 'koncert', ru: 'концерт' },
+          { pl: 'lody', ru: 'мороженое' },
+          { pl: 'taksówka', ru: 'такси' },
+        ],
+        hardWords: [
+          { pl: 'zapraszać', ru: 'приглашать' },
+          { pl: 'spotykać się', ru: 'встречаться' },
+          { pl: 'zakochać się', ru: 'влюбиться' },
+          { pl: 'całować', ru: 'целовать' },
+          { pl: 'przytulać', ru: 'обнимать' },
+          { pl: 'odprowadzić', ru: 'проводить' },
+          { pl: 'zadzwonić', ru: 'позвонить' },
+          { pl: 'czekać', ru: 'ждать' },
+          { pl: 'uśmiechać się', ru: 'улыбаться' },
+          { pl: 'nieśmiały', ru: 'застенчивый' },
+        ],
+      },
     ],
   },
   {
