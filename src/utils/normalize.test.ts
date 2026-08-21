@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { normalizeRussian } from './normalize.ts';
+import { normalizeRussian, stripStress } from './normalize.ts';
 
 const accepts = (given: string, expected: string) =>
   assert.equal(normalizeRussian(given), normalizeRussian(expected), `"${given}" powinno zaliczyć "${expected}"`);
@@ -43,4 +43,11 @@ test('błędne słowo nadal jest błędne', () => {
   rejects('чай', 'кофе');
   rejects('дом', 'дома');
   rejects('мои', 'мой');
+});
+
+test('stripStress zdejmuje akcent, ale nie psuje й i ё', () => {
+  assert.equal(stripStress('во\u0301лосы'), 'волосы');
+  assert.equal(stripStress('хоро\u0301ший'), 'хороший');
+  assert.equal(stripStress('ребёнок'), 'ребёнок');
+  assert.equal(stripStress('мой'), 'мой');
 });

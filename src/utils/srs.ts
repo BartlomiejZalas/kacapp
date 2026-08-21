@@ -1,4 +1,5 @@
 import type { Word } from '../types';
+import { stripStress } from './normalize';
 
 /**
  * Powtórki rozłożone w czasie (Leitner/SM-2 lite).
@@ -82,10 +83,35 @@ const migrateLegacy = (): SrsStore => {
   return store;
 };
 
+/**
+ * Stare karty potrafią mieć w tekście akcent (во\u0301лосы) - dziś słówka są bez niego,
+ * więc taka karta wracałaby w nieskończoność jako osobne, niewpisywalne słowo.
+ * Czyścimy je przy odczycie: klucz i tekst bez akcentu, duplikaty scalone
+ * (wygrywa karta lepiej opanowana). Idempotentne - zapis tylko gdy coś się zmieniło.
+ */
+const stripStressFromStore = (store: SrsStore): SrsStore => {
+  let changed = false;
+  const cleaned: SrsStore = {};
+  Object.entries(store).forEach(([key, card]) => {
+    const ru = stripStress(card.ru ?? key);
+    const cleanKey = stripStress(key);
+    if (ru !== card.ru || cleanKey !== key) changed = true;
+    const existing = cleaned[cleanKey];
+    if (existing) {
+      // Duplikat po odjęciu akcentu - zostawiamy dalej zaawansowaną powtórkę.
+      changed = true;
+      if (existing.box >= card.box) return;
+    }
+    cleaned[cleanKey] = { ...card, ru };
+  });
+  if (changed) writeStore(cleaned);
+  return changed ? cleaned : store;
+};
+
 export const getStore = (): SrsStore => {
   const raw = localStorage.getItem(SRS_KEY);
-  if (raw === null) return migrateLegacy();
-  return readJson<SrsStore>(SRS_KEY, {});
+  if (raw === null) return stripStressFromStore(migrateLegacy());
+  return stripStressFromStore(readJson<SrsStore>(SRS_KEY, {}));
 };
 
 export const getAllCards = (): SrsCard[] => Object.values(getStore());
@@ -115,8 +141,9 @@ export const addWords = (words: Word[]) => {
   const store = getStore();
   let changed = false;
   words.forEach((word) => {
-    if (!store[word.ru]) {
-      store[word.ru] = newCard(word, 0);
+    const key = stripStress(word.ru);
+    if (!store[key]) {
+      store[key] = newCard({ ...word, ru: key }, 0);
       changed = true;
     }
   });
@@ -126,7 +153,7 @@ export const addWords = (words: Word[]) => {
 /** Ocena odpowiedzi: awans o jedno pudełko albo powrót na start. */
 export const gradeCard = (ru: string, isCorrect: boolean) => {
   const store = getStore();
-  const card = store[ru];
+  const card = store[stripStress(ru)];
   if (!card) return;
 
   if (isCorrect) {
