@@ -1228,6 +1228,140 @@ export const categories: Category[] = [
           { pl: 'rozgrzewka', ru: 'разминка' },
         ],
       },
+      {
+        id: '11',
+        name: 'Zakupy',
+        icon: 'ShoppingCart',
+        dialog: `- Здравствуйте! Чем могу помочь?|Dzień dobry! W czym mogę pomóc?
+- Здравствуйте. Я ищу тёплую куртку.|Dzień dobry. Szukam ciepłej kurtki.
+- Какой у вас размер?|Jaki ma pan rozmiar?
+- Кажется, пятидесятый.|Chyba pięćdziesiąty.
+- Вот эта. Хотите примерить?|Proszę, ta. Chce pan przymierzyć?
+- Да. Где примерочная?|Tak. Gdzie jest przymierzalnia?
+- Направо, за кассой.|Na prawo, za kasą.
+- Немного велика. Есть размер поменьше?|Trochę za duża. Jest mniejszy rozmiar?
+- Сейчас посмотрю. Да, есть.|Zaraz sprawdzę. Tak, jest.
+- Отлично. Сколько она стоит?|Świetnie. Ile kosztuje?
+- Три тысячи рублей, сейчас скидка.|Trzy tysiące rubli, teraz jest przecena.
+- Беру. Можно заплатить картой?|Biorę. Mogę zapłacić kartą?
+- Конечно. Вот чек.|Oczywiście. Oto paragon.
+- Спасибо большое!|Dziękuję bardzo!
+- Приходите ещё!|Zapraszamy ponownie!`,
+        words: [
+          { pl: 'sklep', ru: 'магазин' },
+          { pl: 'cena', ru: 'цена' },
+          { pl: 'kasa', ru: 'касса' },
+          { pl: 'rozmiar', ru: 'размер' },
+          { pl: 'kurtka', ru: 'куртка' },
+          { pl: 'przecena', ru: 'скидка' },
+          { pl: 'paragon', ru: 'чек' },
+          { pl: 'karta', ru: 'карта' },
+          { pl: 'pieniądze', ru: 'деньги' },
+          { pl: 'klient', ru: 'покупатель' },
+        ],
+        conjugations: [
+          {
+            title: 'Czasownik "покупать" (kupować)',
+            rows: [
+              { pronoun: 'я', verb: 'покупаю' },
+              { pronoun: 'ты', verb: 'покупаешь' },
+              { pronoun: 'он/она', verb: 'покупает' },
+              { pronoun: 'мы', verb: 'покупаем' },
+              { pronoun: 'вы', verb: 'покупаете' },
+              { pronoun: 'они', verb: 'покупают' },
+            ],
+          },
+          {
+            title: 'Czasownik "платить" (płacić)',
+            rows: [
+              { pronoun: 'я', verb: 'плачу' },
+              { pronoun: 'ты', verb: 'платишь' },
+              { pronoun: 'он/она', verb: 'платит' },
+              { pronoun: 'мы', verb: 'платим' },
+              { pronoun: 'вы', verb: 'платите' },
+              { pronoun: 'они', verb: 'платят' },
+            ],
+          },
+          {
+            title: 'Czasownik "брать" (brać)',
+            rows: [
+              { pronoun: 'я', verb: 'беру' },
+              { pronoun: 'ты', verb: 'берёшь' },
+              { pronoun: 'он/она', verb: 'берёт' },
+              { pronoun: 'мы', verb: 'берём' },
+              { pronoun: 'вы', verb: 'берёте' },
+              { pronoun: 'они', verb: 'берут' },
+            ],
+          },
+        ],
+        unusualPhrases: [
+          {
+            pl: 'Ile to kosztuje?',
+            ru: 'Сколько это стоит',
+            explanation:
+              'Czasownik dopasowuje się do towaru, nie do ceny: jedna rzecz - "стоит", kilka - "стоят". Nie ma czegoś takiego jak "сколько стоит цена" - cena już siedzi w samym czasowniku.',
+            examples: [
+              { pl: 'Ile kosztuje ta kurtka?', ru: 'Сколько стоит эта куртка' },
+              { pl: 'Ile kosztują te buty?', ru: 'Сколько стоят эти туфли' },
+              { pl: 'To kosztuje tysiąc rubli.', ru: 'Это стоит тысячу рублей' },
+            ],
+          },
+          {
+            pl: 'Poproszę (dosł. "proszę dać")',
+            ru: 'Дайте, пожалуйста',
+            explanation:
+              'Polskie "poproszę" nie ma odpowiednika jeden do jednego. W sklepie mówi się "Дайте, пожалуйста" albo krótko "Мне, пожалуйста" plus towar w bierniku. Samo "Я прошу" brzmi jak oficjalna prośba i w sklepie zgrzyta.',
+            examples: [
+              { pl: 'Poproszę chleb.', ru: 'Дайте, пожалуйста, хлеб' },
+              { pl: 'Poproszę dwa kilo jabłek.', ru: 'Мне, пожалуйста, два килограмма яблок' },
+              { pl: 'Wezmę tę koszulę.', ru: 'Я возьму эту рубашку' },
+            ],
+          },
+          {
+            pl: 'Płacić kartą',
+            ru: 'Платить картой',
+            explanation:
+              'Sposób zapłaty stoi w narzędniku, bez przyimka: картой, наличными. Ta sama konstrukcja co "заниматься спортом" - polskie "kartą" ma tu wyjątkowo ten sam narzędnik, więc raz zapamiętane działa.',
+            examples: [
+              { pl: 'Mogę zapłacić kartą?', ru: 'Можно заплатить картой' },
+              { pl: 'Płacę gotówką.', ru: 'Я плачу наличными' },
+              { pl: 'Przyjmujecie karty?', ru: 'Вы принимаете карты' },
+            ],
+          },
+        ],
+        sentences: [
+          { pl: 'Szukam ciepłej kurtki.', ru: 'Я ищу тёплую куртку.' },
+          { pl: 'Gdzie jest przymierzalnia?', ru: 'Где примерочная?' },
+          { pl: 'Jest mniejszy rozmiar?', ru: 'Есть размер поменьше?' },
+          { pl: 'Ile to kosztuje?', ru: 'Сколько это стоит?' },
+          { pl: 'Mogę zapłacić kartą?', ru: 'Можно заплатить картой?' },
+          { pl: 'To za drogo.', ru: 'Это слишком дорого.' },
+        ],
+        enumeratives: [
+          { pl: 'piekarnia', ru: 'булочная' },
+          { pl: 'apteka', ru: 'аптека' },
+          { pl: 'targ', ru: 'рынок' },
+          { pl: 'centrum handlowe', ru: 'торговый центр' },
+          { pl: 'koszula', ru: 'рубашка' },
+          { pl: 'spodnie', ru: 'брюки' },
+          { pl: 'sukienka', ru: 'платье' },
+          { pl: 'buty', ru: 'туфли' },
+          { pl: 'torba', ru: 'сумка' },
+          { pl: 'portfel', ru: 'кошелёк' },
+        ],
+        hardWords: [
+          { pl: 'sprzedawać', ru: 'продавать' },
+          { pl: 'zwrot towaru', ru: 'возврат' },
+          { pl: 'przymierzyć', ru: 'примерить' },
+          { pl: 'wybierać', ru: 'выбирать' },
+          { pl: 'kosztować', ru: 'стоить' },
+          { pl: 'drogi', ru: 'дорогой' },
+          { pl: 'tani', ru: 'дешёвый' },
+          { pl: 'reszta', ru: 'сдача' },
+          { pl: 'gotówka', ru: 'наличные' },
+          { pl: 'sprzedawca', ru: 'продавец' },
+        ],
+      },
     ],
   },
   {
