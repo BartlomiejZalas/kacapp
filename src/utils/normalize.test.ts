@@ -51,3 +51,11 @@ test('stripStress zdejmuje akcent, ale nie psuje й i ё', () => {
   assert.equal(stripStress('ребёнок'), 'ребёнок');
   assert.equal(stripStress('мой'), 'мой');
 });
+
+test('łacińskie bliźniaki liter (o, a, e, B...) nie blokują odpowiedzi', () => {
+  accepts('в\u006Fлосы', 'волосы'); // łacińskie "o" w środku
+  accepts('\u0042олосы', 'волосы'); // łacińskie "B" zamiast "В"
+  accepts('Волосы', 'волосы');
+  accepts('к\u043Eфе', 'кофе');
+  accepts('м\u0430ма', 'мама');
+});

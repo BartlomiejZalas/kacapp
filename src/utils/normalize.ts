@@ -13,8 +13,22 @@ const STRESS_MARKS = /[\u0300\u0301\u0340\u0341\u00b4\u02b9\u02ca\u02cb]/g;
 export const stripStress = (text: string): string =>
   text.normalize('NFD').replace(STRESS_MARKS, '').normalize('NFC');
 
+// Litery łacińskie, które wyglądają dokładnie jak cyrylickie (o, a, e, c, p, x...).
+// Przy przełączaniu układu klawiatury albo autokorekcie na telefonie łatwo wpisać
+// "вoлосы" z łacińskim "o" - dla oka bez różnicy, dla === to inne słowo.
+const HOMOGLYPHS: Record<string, string> = {
+  A: 'А', a: 'а', B: 'В', C: 'С', c: 'с', E: 'Е', e: 'е', H: 'Н',
+  K: 'К', k: 'к', M: 'М', O: 'О', o: 'о', P: 'Р', p: 'р', T: 'Т',
+  X: 'Х', x: 'х', Y: 'У', y: 'у',
+};
+
+/** Zamienia łacińskie bliźniaki na cyrylicę - przed obniżeniem wielkości liter,
+ *  bo tylko wtedy widać, że "B" to "В", a nie "в" od łacińskiego "b". */
+export const foldHomoglyphs = (text: string): string =>
+  text.replace(/[AaBCcEeHKkMOoPpTXxYy]/g, (ch) => HOMOGLYPHS[ch] ?? ch);
+
 export const normalizeRussian = (text: string): string =>
-  stripStress(text)
+  foldHomoglyphs(stripStress(text))
     .toLowerCase()
     .trim()
     .replace(PUNCTUATION, '')
