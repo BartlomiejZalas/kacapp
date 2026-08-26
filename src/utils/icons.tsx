@@ -16,6 +16,7 @@ import {
   Footprints,
   Hash,
   Compass,
+  Dumbbell,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -38,6 +39,7 @@ const iconMap: Record<string, LucideIcon> = {
   Footprints,
   Hash,
   Compass,
+  Dumbbell,
 };
 
 const getLessonIcon = (name: string): LucideIcon => iconMap[name] || BookOpen;

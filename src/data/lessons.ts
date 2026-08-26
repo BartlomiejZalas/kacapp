@@ -1094,6 +1094,140 @@ export const categories: Category[] = [
           { pl: 'nieśmiały', ru: 'застенчивый' },
         ],
       },
+      {
+        id: '10',
+        name: 'Sport',
+        icon: 'Dumbbell',
+        dialog: `- Ты занимаешься спортом?|Uprawiasz sport?
+- Да, я хожу в спортзал три раза в неделю.|Tak, chodzę na siłownię trzy razy w tygodniu.
+- А я больше люблю бегать в парке.|A ja bardziej lubię biegać w parku.
+- Как далеко ты бегаешь?|Jak daleko biegasz?
+- Обычно пять километров.|Zwykle pięć kilometrów.
+- А в футбол играешь?|A grasz w piłkę nożną?
+- Играю по субботам с друзьями.|Gram w soboty z kolegami.
+- За какую команду ты болеешь?|Jakiej drużynie kibicujesz?
+- За местную. Вчера они выиграли матч.|Miejscowej. Wczoraj wygrali mecz.
+- С каким счётом?|Jakim wynikiem?
+- Два ноль.|Dwa zero.
+- Поздравляю! А я вчера проиграл в теннис.|Gratuluję! A ja wczoraj przegrałem w tenisa.
+- Ничего, в следующий раз повезёт.|Nic to, następnym razem się poszczęści.
+- Пойдём завтра на тренировку вместе?|Pójdziemy jutro razem na trening?
+- Давай! Только не забудь кроссовки.|Chodźmy! Tylko nie zapomnij butów sportowych.`,
+        words: [
+          { pl: 'sport', ru: 'спорт' },
+          { pl: 'siłownia', ru: 'спортзал' },
+          { pl: 'trening', ru: 'тренировка' },
+          { pl: 'mecz', ru: 'матч' },
+          { pl: 'drużyna', ru: 'команда' },
+          { pl: 'zwycięstwo', ru: 'победа' },
+          { pl: 'piłka', ru: 'мяч' },
+          { pl: 'stadion', ru: 'стадион' },
+          { pl: 'zawodnik', ru: 'игрок' },
+          { pl: 'zawody', ru: 'соревнования' },
+        ],
+        conjugations: [
+          {
+            title: 'Czasownik "заниматься" (zajmować się, uprawiać)',
+            rows: [
+              { pronoun: 'я', verb: 'занимаюсь' },
+              { pronoun: 'ты', verb: 'занимаешься' },
+              { pronoun: 'он/она', verb: 'занимается' },
+              { pronoun: 'мы', verb: 'занимаемся' },
+              { pronoun: 'вы', verb: 'занимаетесь' },
+              { pronoun: 'они', verb: 'занимаются' },
+            ],
+          },
+          {
+            title: 'Czasownik "играть" (grać)',
+            rows: [
+              { pronoun: 'я', verb: 'играю' },
+              { pronoun: 'ты', verb: 'играешь' },
+              { pronoun: 'он/она', verb: 'играет' },
+              { pronoun: 'мы', verb: 'играем' },
+              { pronoun: 'вы', verb: 'играете' },
+              { pronoun: 'они', verb: 'играют' },
+            ],
+          },
+          {
+            title: 'Czasownik "бегать" (biegać)',
+            rows: [
+              { pronoun: 'я', verb: 'бегаю' },
+              { pronoun: 'ты', verb: 'бегаешь' },
+              { pronoun: 'он/она', verb: 'бегает' },
+              { pronoun: 'мы', verb: 'бегаем' },
+              { pronoun: 'вы', verb: 'бегаете' },
+              { pronoun: 'они', verb: 'бегают' },
+            ],
+          },
+        ],
+        unusualPhrases: [
+          {
+            pl: 'Uprawiać sport (dosł. "zajmować się sportem")',
+            ru: 'Заниматься спортом',
+            explanation:
+              'Po "заниматься" dyscyplina stoi w narzędniku (творительный), bez żadnego przyimka: спортом, плаванием, боксом. Polskie "uprawiać sport" ma biernik, więc łatwo tu machinalnie wstawić "спорт" - i to jest właśnie ten błąd.',
+            examples: [
+              { pl: 'Uprawiam sport.', ru: 'Я занимаюсь спортом' },
+              { pl: 'Ona pływa (uprawia pływanie).', ru: 'Она занимается плаванием' },
+              { pl: 'Jak długo trenujesz boks?', ru: 'Как давно ты занимаешься боксом' },
+            ],
+          },
+          {
+            pl: 'Kibicować (dosł. "chorować za kogoś")',
+            ru: 'Болеть за',
+            explanation:
+              'Ten sam czasownik znaczy "chorować", ale z przyimkiem "за" i biernikiem znaczy "kibicować". "Я болею" to jestem chory, a "Я болею за Спартак" to kibicuję Spartakowi - o różnicy decyduje samo "за".',
+            examples: [
+              { pl: 'Komu kibicujesz?', ru: 'За кого ты болеешь' },
+              { pl: 'Kibicuję miejscowej drużynie.', ru: 'Я болею за местную команду' },
+              { pl: 'Cały stadion kibicował im.', ru: 'Весь стадион болел за них' },
+            ],
+          },
+          {
+            pl: 'Grać w piłkę nożną (dosł. "grać w futbol")',
+            ru: 'Играть в футбол',
+            explanation:
+              'Gry i sporty biorą "играть в" + biernik (в футбол, в теннис, в шахматы), ale instrumenty muzyczne "играть на" + miejscownik (на гитаре). Jeden czasownik, dwa przyimki - zależnie od tego, w co albo na czym się gra.',
+            examples: [
+              { pl: 'Gramy w piłkę w sobotę.', ru: 'Мы играем в футбол в субботу' },
+              { pl: 'Grasz w tenisa?', ru: 'Ты играешь в теннис' },
+              { pl: 'On gra na gitarze.', ru: 'Он играет на гитаре' },
+            ],
+          },
+        ],
+        sentences: [
+          { pl: 'Uprawiasz sport?', ru: 'Ты занимаешься спортом?' },
+          { pl: 'Chodzę na siłownię trzy razy w tygodniu.', ru: 'Я хожу в спортзал три раза в неделю.' },
+          { pl: 'Lubię biegać w parku.', ru: 'Я люблю бегать в парке.' },
+          { pl: 'Wczoraj nasza drużyna wygrała mecz.', ru: 'Вчера наша команда выиграла матч.' },
+          { pl: 'Jakiej drużynie kibicujesz?', ru: 'За какую команду ты болеешь?' },
+          { pl: 'Jutro mam trening.', ru: 'Завтра у меня тренировка.' },
+        ],
+        enumeratives: [
+          { pl: 'piłka nożna', ru: 'футбол' },
+          { pl: 'koszykówka', ru: 'баскетбол' },
+          { pl: 'siatkówka', ru: 'волейбол' },
+          { pl: 'hokej', ru: 'хоккей' },
+          { pl: 'pływanie', ru: 'плавание' },
+          { pl: 'narty', ru: 'лыжи' },
+          { pl: 'tenis', ru: 'теннис' },
+          { pl: 'boks', ru: 'бокс' },
+          { pl: 'kolarstwo', ru: 'велоспорт' },
+          { pl: 'lekkoatletyka', ru: 'лёгкая атлетика' },
+        ],
+        hardWords: [
+          { pl: 'wygrać', ru: 'выиграть' },
+          { pl: 'przegrać', ru: 'проиграть' },
+          { pl: 'trenować', ru: 'тренироваться' },
+          { pl: 'pływać', ru: 'плавать' },
+          { pl: 'skakać', ru: 'прыгать' },
+          { pl: 'rzucać', ru: 'бросать' },
+          { pl: 'sędzia', ru: 'судья' },
+          { pl: 'bramka', ru: 'ворота' },
+          { pl: 'buty sportowe', ru: 'кроссовки' },
+          { pl: 'rozgrzewka', ru: 'разминка' },
+        ],
+      },
     ],
   },
   {
