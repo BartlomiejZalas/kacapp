@@ -1,5 +1,5 @@
-import type { Word } from '../types';
-import { stripStress } from './normalize';
+import type { Word } from '../types.ts';
+import { normalizeRussian, stripStress } from './normalize.ts';
 
 /**
  * Powtórki rozłożone w czasie (Leitner/SM-2 lite).
@@ -106,6 +106,40 @@ const stripStressFromStore = (store: SrsStore): SrsStore => {
   });
   if (changed) writeStore(cleaned);
   return changed ? cleaned : store;
+};
+
+/**
+ * Naprawa kart rozjechanych ze słownikiem lekcji. Karta to zamrożona kopia słówka
+ * sprzed miesięcy - jeśli osiadł w niej znak niewidoczny na ekranie (łacińskie "o"
+ * zamiast cyrylickiego, zero-width, akcent), to słówko wraca w kółko i nie da się
+ * go wpisać poprawnie. Porównujemy znormalizowaną postać z aktualnym słownikiem
+ * i przywracamy wzorcową pisownię. Idempotentne - zapis tylko gdy coś się zmieniło.
+ */
+export const repairStore = (words: Word[]) => {
+  const canonical = new Map<string, Word>();
+  words.forEach((w) => canonical.set(normalizeRussian(w.ru), w));
+
+  const store = getStore();
+  let changed = false;
+  const repaired: SrsStore = {};
+
+  Object.entries(store).forEach(([key, card]) => {
+    const match = canonical.get(normalizeRussian(card.ru ?? key));
+    // Karta spoza aktualnego słownika (usunięte słówko) - zostawiamy nietkniętą.
+    const fixed = match ? { ...card, ru: match.ru, pl: card.pl || match.pl } : card;
+    const fixedKey = match ? match.ru : key;
+    if (fixedKey !== key || fixed.ru !== card.ru) changed = true;
+
+    const existing = repaired[fixedKey];
+    if (existing) {
+      // Ta sama karta w dwóch pisowniach - zostaje lepiej opanowana powtórka.
+      changed = true;
+      if (existing.box >= fixed.box) return;
+    }
+    repaired[fixedKey] = fixed;
+  });
+
+  if (changed) writeStore(repaired);
 };
 
 export const getStore = (): SrsStore => {

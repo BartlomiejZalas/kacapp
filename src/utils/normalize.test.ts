@@ -59,3 +59,9 @@ test('łacińskie bliźniaki liter (o, a, e, B...) nie blokują odpowiedzi', () 
   accepts('к\u043Eфе', 'кофе');
   accepts('м\u0430ма', 'мама');
 });
+
+test('znaki niewidoczne (zero-width, miękki dywiz) nie blokują odpowiedzi', () => {
+  accepts('во\u200bлосы', 'волосы');
+  accepts('волосы\ufeff', 'волосы');
+  accepts('во\u00adлосы', 'волосы');
+});

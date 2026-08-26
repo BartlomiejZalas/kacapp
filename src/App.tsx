@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Dashboard } from './components/Dashboard';
 import { LessonView } from './components/LessonView';
 import { DialogView } from './components/DialogView';
@@ -13,16 +13,26 @@ import { SubLessonDictation } from './components/SubLessonDictation';
 import { SubLessonFinalTest } from './components/SubLessonFinalTest';
 import { categories } from './data/lessons';
 import { grammarLessons } from './data/grammar';
+import { repairStore } from './utils/srs';
 import { GrammarLessonView } from './components/GrammarLessonView';
 
 function App() {
   const lessons = categories.flatMap((c) => c.lessons);
+
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
   const [currentSubLesson, setCurrentSubLesson] = useState<string | null>(null);
   const [showReviews, setShowReviews] = useState(false);
   const [currentGrammarId, setCurrentGrammarId] = useState<string | null>(null);
   // Podbijany przy każdym powrocie, żeby ekrany przeliczyły postęp z localStorage.
   const [refreshKey, setRefreshKey] = useState(0);
+
+  // Raz na wejście do apki: karta powtórek zapisana kiedyś z literówką albo
+  // niewidocznym znakiem wracałaby w nieskończoność - przywracamy jej pisownię
+  // ze słownika lekcji. Nic nie zapisuje, jeśli wszystko się zgadza.
+  useEffect(() => {
+    repairStore(lessons.flatMap((l) => [...l.words, ...l.hardWords]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const currentLesson = lessons.find((l) => l.id === currentLessonId);
 
